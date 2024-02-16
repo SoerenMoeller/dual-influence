@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { loadCuboidQualiX } from './svg.js'
 
 
 export function drawCuboid(scene, st) {
@@ -18,4 +19,8 @@ export function drawCuboid(scene, st) {
     edges.translateY(height/2 + st.y[0]);
     edges.translateZ(depth/2 + st.z[0]);
     scene.add( edges );
+
+    if (width != 0 && depth != 0) {
+        loadCuboidQualiX(scene, "imgs/mono.svg");
+    }
 }
