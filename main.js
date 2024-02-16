@@ -8,9 +8,17 @@ import { setupModel } from './src/model.js';
 
 const scene = setupScene();
 const model = await setupModel("data/example.json");
-console.log(model);
 drawCoordinateSystem(scene, model);
+renderSVG(scene, "imgs/mono.svg");
+drawCuboid(scene, model.statements[0]);
 
+/*
+const dotGeometry = new THREE.BufferGeometry();
+dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([1,0,0]), 3));
+const dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0xff0000 });
+const dot = new THREE.Points(dotGeometry, dotMaterial);
+scene.add(dot);
+*/
 
 function setupScene() {
     const scene = new THREE.Scene();

@@ -26,11 +26,18 @@ const renderSVG = (scene, svg) => {
 
       // Add the group to the scene
       scene.add(group);
-      const box = new THREE.Box3().setFromObject(group);
-      const width = box.max.x - box.min.x;
+      let box = new THREE.Box3().setFromObject(group);
+      let width = box.max.x - box.min.x;
       const height = box.max.y - box.min.y;
       console.log('Width:', width);
-      group.scale.set(1/height*2, 1/width, 0);
+      group.scale.set(1/height*0.3, 1/width*0.3, 0);
+      box = new THREE.Box3().setFromObject(group);
+      width = box.max.x - box.min.x;
+      group.rotateX(Math.PI / 2);
+      group.translateX(0.5 - width/2);
+      //group.rotateX(Math.PI / 2);
+      //group.rotateY(Math.PI);
+      //group.translateY(0.2);
     });
 };
 

@@ -18,8 +18,8 @@ function createAxes(model) {
 
     // extract bounds
     for (const axis of axes) {
-        axis.minBound = Math.min(model.bounds[axis.name][0], -1);
-        axis.maxBound = Math.max(model.bounds[axis.name][1], 1);
+        axis.minBound = Math.min(model.bounds[axis.name][0], 0) - 1;
+        axis.maxBound = Math.max(model.bounds[axis.name][1], 0) + 1;
     }
 
     return axes;
@@ -68,11 +68,11 @@ function drawGrid(scene, axes) {
 
 function drawDottedLine(scene, axis, xVal, yVal, zVal) {
     const material = new LineDashedMaterial( {
-        color: 0xa5a5a5,
+        color: 0xd3d3d3,
         linewidth: 0.1,
         scale: 1,
-        dashSize: 0.1,
-        gapSize: 0.2,
+        dashSize: 0.025,
+        gapSize: 0.05,
     });
 
     let offset;
