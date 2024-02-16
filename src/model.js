@@ -3,9 +3,9 @@ export async function setupModel(path) {
         return {
         ...rawModel,
         bounds: {
-            lr: getBounds(rawModel, "lr"),
-            fb: getBounds(rawModel, "fb"),
-            to: getBounds(rawModel, "to")
+            x: getBounds(rawModel, "x"),
+            y: getBounds(rawModel, "y"),
+            z: getBounds(rawModel, "z")
         }}
     }
 

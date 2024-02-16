@@ -1,4 +1,4 @@
-import { Vector3, ArrowHelper } from 'three';
+import { Vector3, ArrowHelper, BufferGeometry, Line, LineDashedMaterial } from 'three';
 
 
 const COLOR = 0x000000;
@@ -7,15 +7,14 @@ const stepSize = 1;
 
 
 const range = (start, stop, step = 1) =>
-  Array(Math.ceil((stop - start) / step)).fill(start).map((x, y) => x + y * step)
+  Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step)
 
-
-export function drawCoordinateSystem(scene, model) {
+function createAxes(model) {
     const axes = [
-        {dir: new Vector3(1, 0, 0), name: "lr"},
-        {dir: new Vector3(0, 1, 0), name: "fb"},
-        {dir: new Vector3(0, 0, 1), name: "to"}
-    ]
+        {dir: new Vector3(1, 0, 0), name: "x"},
+        {dir: new Vector3(0, 1, 0), name: "y"},
+        {dir: new Vector3(0, 0, 1), name: "z"}
+    ];
 
     // extract bounds
     for (const axis of axes) {
@@ -23,7 +22,10 @@ export function drawCoordinateSystem(scene, model) {
         axis.maxBound = Math.max(model.bounds[axis.name][1], 1);
     }
 
-    // draw axis
+    return axes;
+}
+
+function drawAxes(scene, axes) {
     for (const axis of axes) {
         // extract origin and length of arrow
         const origin = axis.dir.clone().multiplyScalar(axis.minBound);
@@ -34,25 +36,66 @@ export function drawCoordinateSystem(scene, model) {
         arrow.line.material.linewidth = 2;
         scene.add(arrow);
     }
-
-    //drawGrid(scene, 20);
 }
 
-function drawGrid(scene, length) {
-    const material = new THREE.LineDashedMaterial( {
-        color: 0xffffff,
-        linewidth: 1,
+export function drawCoordinateSystem(scene, model) {
+    const axes = createAxes(model);
+    drawAxes(scene, axes);
+    drawGrid(scene, axes);
+}
+
+function drawGrid(scene, axes) {
+    const [xAxis, yAxis, zAxis] = axes;
+    for (const xVal of range(xAxis.minBound, xAxis.maxBound, stepSize)) {
+        for (const yVal of range(yAxis.minBound, yAxis.maxBound, stepSize)) {
+            for (const zVal of range(zAxis.minBound, zAxis.maxBound, stepSize)) {
+                if (xVal == xAxis.minBound) {
+                    drawDottedLine(scene, xAxis, xVal, yVal, zVal);
+                }
+
+                if (yVal == yAxis.minBound) {
+                    drawDottedLine(scene, yAxis, xVal, yVal, zVal);
+                }
+
+                if (zVal == zAxis.minBound) {
+                    drawDottedLine(scene, zAxis, xVal, yVal, zVal);
+                }
+            }
+        } 
+    }
+}
+
+
+function drawDottedLine(scene, axis, xVal, yVal, zVal) {
+    const material = new LineDashedMaterial( {
+        color: 0xa5a5a5,
+        linewidth: 0.1,
         scale: 1,
-        dashSize: 3,
-        gapSize: 1,
+        dashSize: 0.1,
+        gapSize: 0.2,
     });
 
-    const points = [];
-    points.push( new THREE.Vector3( - 10, 0, 0 ) );
-    points.push( new THREE.Vector3( 0, 10, 0 ) );
-    points.push( new THREE.Vector3( 10, 0, 0 ) );
+    let offset;
+    if (axis.name == "x") {
+        const yOffset = new Vector3(0, 1, 0).multiplyScalar(yVal);
+        const zOffset = new Vector3(0, 0, 1).multiplyScalar(zVal);
+        offset = yOffset.add(zOffset);
+    } else if (axis.name == "y") {
+        const xOffset = new Vector3(1, 0, 0).multiplyScalar(xVal);
+        const zOffset = new Vector3(0, 0, 1).multiplyScalar(zVal);
+        offset = xOffset.add(zOffset);
+    } else if (axis.name == "z") {
+        const xOffset = new Vector3(1, 0, 0).multiplyScalar(xVal);
+        const yOffset = new Vector3(0, 1, 0).multiplyScalar(yVal);
+        offset = xOffset.add(yOffset);
+    }
 
-    const geometry = new THREE.BufferGeometry().setFromPoints( points );
-    const line = new THREE.Line( geometry, material );
+    const startPoint = axis.dir.clone().multiplyScalar(axis.minBound).add(offset);
+    const endPoint = axis.dir.clone().multiplyScalar(axis.maxBound).add(offset);
+
+    const geometry = new BufferGeometry().setFromPoints( [startPoint, endPoint] );
+    const line = new Line( geometry, material );
+    line.computeLineDistances();
+
     scene.add( line );
 }
