@@ -2,6 +2,8 @@ import { Vector3, ArrowHelper } from 'three';
 
 
 const COLOR = 0x000000;
+const bDrawGrid = true;
+const stepSize = 1;
 
 
 const range = (start, stop, step = 1) =>
@@ -15,14 +17,17 @@ export function drawCoordinateSystem(scene, model) {
         {dir: new Vector3(0, 0, 1), name: "to"}
     ]
 
+    // extract bounds
     for (const axis of axes) {
-        // extract bounds
-        const minBound = Math.min(model.bounds[axis.name][0], -1);
-        const maxBound = Math.max(model.bounds[axis.name][1], 1);
+        axis.minBound = Math.min(model.bounds[axis.name][0], -1);
+        axis.maxBound = Math.max(model.bounds[axis.name][1], 1);
+    }
 
+    // draw axis
+    for (const axis of axes) {
         // extract origin and length of arrow
-        const origin = axis.dir.clone().multiplyScalar(minBound);
-        const length = maxBound - minBound;
+        const origin = axis.dir.clone().multiplyScalar(axis.minBound);
+        const length = axis.maxBound - axis.minBound;
 
         // TODO: Make arrow-head size universal?
         const arrow = new ArrowHelper(axis.dir, origin, length, COLOR, length*0.05);
@@ -31,15 +36,6 @@ export function drawCoordinateSystem(scene, model) {
     }
 
     //drawGrid(scene, 20);
-}
-
-function getBounds(model) {
-    const sts = model.statements;
-    return {
-        lr: [sts.map(x => x.lr[0]), sts.map(x => x.lr[1])],
-        fb: [sts.map(x => x.lr[0]), sts.map(x => x.fb[1])],
-        to: [sts.map(x => x.lr[0]), sts.map(x => x.to[1])]
-    };
 }
 
 function drawGrid(scene, length) {
