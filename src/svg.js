@@ -1,7 +1,55 @@
 import * as THREE from "three";
 import { SVGLoader } from "three/addons/loaders/SVGLoader";
 
-export function drawCuboidQualiZ(scene, quali, st) {
+export function drawCuboidQualiUnitX(scene, st) {
+    const quali = st.zq;
+    const placeSVG = (svg) => {
+        // change size dependent on statement
+        const size = Math.min(st.height(), st.depth());
+        changeScale(svg, size, size);
+        svg.rotateY(Math.PI / 2);
+
+        const dim = getDimensions(svg);
+
+        let offset = 0;
+        if (quali == "arb" || quali == "const") {
+            offset = -0.1;
+        }
+        svg.translateX(st.centerZ() - dim.width/2 + offset);
+        svg.translateY(st.centerY());
+
+        scene.add(svg);
+    };
+
+    loadSVG(quali, placeSVG);
+}
+
+export function drawCuboidQualiUnitZ(scene, st) {
+    const quali = st.xq;
+    console.log(quali);
+    const placeSVG = (svg) => {
+        // change size dependent on statement
+        const size = Math.min(st.width(), st.height());
+        changeScale(svg, size, size);
+            
+        const dim = getDimensions(svg);
+        
+        let offset = 0;
+        if (quali == "arb" || quali == "const") {
+            offset = -0.1;
+        }
+        svg.translateX(st.centerX() - dim.width/2 + offset);
+        svg.translateY(st.centerY());
+
+        console.log(svg.position);
+        scene.add(svg);
+    };
+
+    loadSVG(quali, placeSVG);
+}
+
+export function drawCuboidQualiZ(scene, st) {
+    const quali = st.zq;
     const placeSVG = (svg) => {
         // change size dependent on statement
         const size = Math.min(st.width(), st.depth());
@@ -25,12 +73,13 @@ export function drawCuboidQualiZ(scene, quali, st) {
         svg.translateY(shift);
         svg.translateZ(-st.y[0]);
         scene.add(svg);
-    }
+    };
 
     loadSVG(quali, placeSVG);
 }
 
-export function drawCuboidQualiX(scene, quali, st) {
+export function drawCuboidQualiX(scene, st) {
+    const quali = st.xq;
     const placeSVG = (svg) => {
         // change size dependent on statement
         const size = Math.min(st.width(), st.depth());
@@ -50,7 +99,7 @@ export function drawCuboidQualiX(scene, quali, st) {
         svg.translateY(dim.box.max.y + st.z[1] - dim.width/2);
         svg.translateZ(-st.y[0]);
         scene.add(svg);
-    }
+    };
 
     loadSVG(quali, placeSVG);
 }
@@ -80,7 +129,7 @@ function loadSVG(name, placeFn) {
             changeScale(group, 0.6, 1);
         }
         if (name == "arb" || name == "const") {
-            group.translateZ(0.15);
+            group.translateZ(0.1);
         }
 
         placeFn(group);

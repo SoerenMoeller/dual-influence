@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { drawCuboidQualiX, drawCuboidQualiZ } from './svg.js'
+import { drawCuboidQualiX, drawCuboidQualiZ, drawCuboidQualiUnitX, drawCuboidQualiUnitZ } from './svg.js'
 
 
 export function drawCuboid(scene, st) {
@@ -21,7 +21,15 @@ export function drawCuboid(scene, st) {
     scene.add(edges);
 
     if (width != 0 && depth != 0) {
-        drawCuboidQualiX(scene, st.xq, st);
-        drawCuboidQualiZ(scene, st.xq, st);
+        drawCuboidQualiX(scene, st);
+        drawCuboidQualiZ(scene, st);
+    }
+
+    if (width == 0 && depth != 0) {
+        drawCuboidQualiUnitX(scene, st);
+    }
+
+    if (width != 0 && depth == 0) {
+        drawCuboidQualiUnitZ(scene, st);
     }
 }
