@@ -1,3 +1,10 @@
+import * as typedef from "./typedefs";
+
+/**
+ * Adds usefull methods to statements.
+ * @param {typedef.Statement} st 
+ * @returns {typedef.Statement}
+ */
 export const create = (st) => ({
     ...st, 
     width() {

@@ -1,6 +1,6 @@
+import { SVGLoader } from "three/addons/loaders/SVGLoader";
 import * as THREE from "three";
 import * as C from "./constants.js"
-import { SVGLoader } from "three/addons/loaders/SVGLoader";
 
 export function drawCuboidQualiUnitX(scene, st) {
     const quali = st.zq;

@@ -2,13 +2,13 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import * as THREE from "three";
 import * as CS from "./src/coordinate-system.js";
 import * as CUBOID from "./src/cuboid.js";
-import * as MODEL from "./src/model.js";
+import * as SCHEME from "./src/scheme.js";
 
 
 const scene = setupScene();
-const model = await MODEL.setup("data/example.json");
-CS.draw(scene, model);
-for (const st of model.statements) {
+const scheme = await SCHEME.setup("data/example.json");
+CS.draw(scene, scheme);
+for (const st of scheme.statements) {
     CUBOID.draw(scene, st);
 }
 
