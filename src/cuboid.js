@@ -1,7 +1,13 @@
 import * as THREE from "three";
 import * as SVG from "./svg.js";
+import * as typedef from "./typedefs.js";
 
-
+/**
+ * Draws a statement as a cuboid. Also draws the qualities on the bottom.
+ * If one is a unit interval, the qualitiy is depicted in the center.
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Statement} st 
+ */
 export function draw(scene, st) {
     const geometry = new THREE.BoxGeometry( 
         st.x[1] - st.x[0], 
@@ -12,6 +18,7 @@ export function draw(scene, st) {
     const material = new THREE.LineBasicMaterial( {color: 0x000000} );
     const edges = new THREE.LineSegments( edgesGeometry, material );
 
+    // shift the statement into the correct position
     const height = geometry.parameters.height;
     const width = geometry.parameters.width;
     const depth = geometry.parameters.depth;
