@@ -1,8 +1,8 @@
-const ARB = "arb";
-const MONO = "mono";
-const ANTI = "anti";
-const CONST = "const";
+export const ARB = "arb";
+export const MONO = "mono";
+export const ANTI = "anti";
+export const CONST = "const";
 
-const BLACK = 0x000000;
-const WHITE = 0xffffff;
-const LIGHT_GREY = 0xd3d3d3;
+export const BLACK = 0x000000;
+export const WHITE = 0xffffff;
+export const LIGHT_GREY = 0xd3d3d3;

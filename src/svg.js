@@ -1,6 +1,6 @@
 import { SVGLoader } from "three/addons/loaders/SVGLoader";
 import * as THREE from "three";
-import * as C from "./constants.js"
+import * as C from "./constants.js";
 import * as typedef from "./typedefs.js";
 
 /**
@@ -154,7 +154,9 @@ function loadSVG(name, placeFn) {
         // resize it to a base size
         const dim = getDimensions(group)
         group.scale.set(1/dim.height*0.2, 1/dim.width*0.2, 0);
+        console.log(name, C.ARB);
         if (name == C.ARB) {
+            console.log("hi");
             changeScale(group, 0.6, 1);
         }
 
