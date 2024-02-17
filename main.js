@@ -1,15 +1,15 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { drawCoordinateSystem } from './src/coordinate-system.js';
-import { drawCuboid } from './src/cuboid.js';
-import { setupModel } from './src/statement.js';
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import * as THREE from "three";
+import * as CS from "./src/coordinate-system.js";
+import * as CUBOID from "./src/cuboid.js";
+import * as MODEL from "./src/model.js";
 
 
 const scene = setupScene();
-const model = await setupModel("data/example.json");
-drawCoordinateSystem(scene, model);
+const model = await MODEL.setup("data/example.json");
+CS.draw(scene, model);
 for (const st of model.statements) {
-    drawCuboid(scene, st);
+    CUBOID.draw(scene, st);
 }
 
 

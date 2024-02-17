@@ -1,4 +1,4 @@
-import { Vector3, ArrowHelper, BufferGeometry, Line, LineDashedMaterial } from 'three';
+import * as THREE from "three";
 
 
 const COLOR = 0x000000;
@@ -10,11 +10,17 @@ const range = (start, stop, step = 1) => {
     return Array(Math.ceil((stop + 1 - start) / step)).fill(start).map((x, y) => x + y * step);
 }
 
+export function draw(scene, model) {
+    const axes = createAxes(model);
+    drawAxes(scene, axes);
+    drawGrid(scene, axes);
+}
+
 function createAxes(model) {
     const axes = [
-        {dir: new Vector3(1, 0, 0), name: "x"},
-        {dir: new Vector3(0, 1, 0), name: "y"},
-        {dir: new Vector3(0, 0, 1), name: "z"}
+        {dir: new THREE.Vector3(1, 0, 0), name: "x"},
+        {dir: new THREE.Vector3(0, 1, 0), name: "y"},
+        {dir: new THREE.Vector3(0, 0, 1), name: "z"}
     ];
 
     // extract bounds
@@ -33,16 +39,10 @@ function drawAxes(scene, axes) {
         const length = axis.maxBound - axis.minBound;
 
         // TODO: Make arrow-head size universal?
-        const arrow = new ArrowHelper(axis.dir, origin, length, COLOR, length*0.05);
+        const arrow = new THREE.ArrowHelper(axis.dir, origin, length, COLOR, length*0.05);
         arrow.line.material.linewidth = 2;
         scene.add(arrow);
     }
-}
-
-export function drawCoordinateSystem(scene, model) {
-    const axes = createAxes(model);
-    drawAxes(scene, axes);
-    drawGrid(scene, axes);
 }
 
 function drawGrid(scene, axes) {
@@ -64,11 +64,11 @@ function drawGridDimension(scene, axisA, axisB, axisC) {
 }
 
 function drawDottedLine(scene, axis, offset) {
-    if (offset.equals(new Vector3(0, 0, 0))) {
+    if (offset.equals(new THREE.Vector3(0, 0, 0))) {
         return;
     }
 
-    const material = new LineDashedMaterial( {
+    const material = new THREE.LineDashedMaterial( {
         color: 0xd3d3d3,
         linewidth: 0.1,
         scale: 1,
@@ -79,9 +79,9 @@ function drawDottedLine(scene, axis, offset) {
     const startPoint = axis.dir.clone().multiplyScalar(axis.minBound).add(offset);
     const endPoint = axis.dir.clone().multiplyScalar(axis.maxBound).add(offset);
 
-    const geometry = new BufferGeometry().setFromPoints( [startPoint, endPoint] );
-    const line = new Line( geometry, material );
+    const geometry = new THREE.BufferGeometry().setFromPoints( [startPoint, endPoint] );
+    const line = new THREE.Line(geometry, material);
     line.computeLineDistances();
 
-    scene.add( line );
+    scene.add(line);
 }

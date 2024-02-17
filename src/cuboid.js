@@ -1,8 +1,8 @@
-import * as THREE from 'three';
-import { drawCuboidQualiX, drawCuboidQualiZ, drawCuboidQualiUnitX, drawCuboidQualiUnitZ } from './svg.js'
+import * as THREE from "three";
+import * as SVG from "./svg.js";
 
 
-export function drawCuboid(scene, st) {
+export function draw(scene, st) {
     const geometry = new THREE.BoxGeometry( 
         st.x[1] - st.x[0], 
         st.y[1] - st.y[0], 
@@ -21,15 +21,15 @@ export function drawCuboid(scene, st) {
     scene.add(edges);
 
     if (width != 0 && depth != 0) {
-        drawCuboidQualiX(scene, st);
-        drawCuboidQualiZ(scene, st);
+        SVG.drawCuboidQualiX(scene, st);
+        SVG.drawCuboidQualiZ(scene, st);
     }
 
     if (width == 0 && depth != 0) {
-        drawCuboidQualiUnitX(scene, st);
+        SVG.drawCuboidQualiUnitX(scene, st);
     }
 
     if (width != 0 && depth == 0) {
-        drawCuboidQualiUnitZ(scene, st);
+        SVG.drawCuboidQualiUnitZ(scene, st);
     }
 }

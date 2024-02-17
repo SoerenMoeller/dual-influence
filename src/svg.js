@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as C from "./constants.js"
 import { SVGLoader } from "three/addons/loaders/SVGLoader";
 
 export function drawCuboidQualiUnitX(scene, st) {
@@ -26,14 +27,13 @@ export function drawCuboidQualiUnitX(scene, st) {
 
 export function drawCuboidQualiUnitZ(scene, st) {
     const quali = st.xq;
-    console.log(quali);
     const placeSVG = (svg) => {
         // change size dependent on statement
         const size = Math.min(st.width(), st.height());
         changeScale(svg, size, size);
             
         const dim = getDimensions(svg);
-        
+
         let offset = 0;
         if (quali == "arb" || quali == "const") {
             offset = -0.1;
@@ -41,7 +41,6 @@ export function drawCuboidQualiUnitZ(scene, st) {
         svg.translateX(st.centerX() - dim.width/2 + offset);
         svg.translateY(st.centerY());
 
-        console.log(svg.position);
         scene.add(svg);
     };
 
