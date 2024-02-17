@@ -2,19 +2,33 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { drawCoordinateSystem } from './src/coordinate-system.js';
 import { drawCuboid } from './src/cuboid.js';
-import { setupModel } from './src/model.js';
+import { setupModel } from './src/statement.js';
 
 
 const scene = setupScene();
 const model = await setupModel("data/example.json");
 drawCoordinateSystem(scene, model);
-drawCuboid(scene, model.statements[0]);
+for (const st of model.statements) {
+    drawCuboid(scene, st);
+}
 
 
-const dotGeometry = new THREE.BufferGeometry();
+let dotGeometry = new THREE.BufferGeometry();
 dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([1,0,0]), 3));
-const dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0xff0000 });
-const dot = new THREE.Points(dotGeometry, dotMaterial);
+let dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0xff0000 });
+let dot = new THREE.Points(dotGeometry, dotMaterial);
+scene.add(dot);
+
+dotGeometry = new THREE.BufferGeometry();
+dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,1,0]), 3));
+dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0x00ff00 });
+dot = new THREE.Points(dotGeometry, dotMaterial);
+scene.add(dot);
+
+dotGeometry = new THREE.BufferGeometry();
+dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,1]), 3));
+dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0x0000ff });
+dot = new THREE.Points(dotGeometry, dotMaterial);
 scene.add(dot);
 
 
