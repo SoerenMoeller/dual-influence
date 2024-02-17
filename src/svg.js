@@ -1,7 +1,13 @@
 import { SVGLoader } from "three/addons/loaders/SVGLoader";
 import * as THREE from "three";
 import * as C from "./constants.js"
+import * as typedef from "./typedefs.js";
 
+/**
+ * Draws the quali st.zq in the center of the cuboid with width 0.
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Statement} st 
+ */
 export function drawCuboidQualiUnitX(scene, st) {
     const quali = st.zq;
     const placeSVG = (svg) => {
@@ -10,12 +16,14 @@ export function drawCuboidQualiUnitX(scene, st) {
         changeScale(svg, size, size);
         svg.rotateY(Math.PI / 2);
 
-        const dim = getDimensions(svg);
-
+        // get offset dependend on quali
         let offset = 0;
-        if (quali == "arb" || quali == "const") {
+        if (quali == C.ARB || quali == C.CONST) {
             offset = -0.1;
         }
+
+        // push into position
+        const dim = getDimensions(svg);
         svg.translateX(st.centerZ() - dim.width/2 + offset);
         svg.translateY(st.centerY());
 
@@ -25,6 +33,11 @@ export function drawCuboidQualiUnitX(scene, st) {
     loadSVG(quali, placeSVG);
 }
 
+/**
+ * Draws the quali st.xq in the center of the cuboid with depth 0.
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Statement} st 
+ */
 export function drawCuboidQualiUnitZ(scene, st) {
     const quali = st.xq;
     const placeSVG = (svg) => {
@@ -32,12 +45,14 @@ export function drawCuboidQualiUnitZ(scene, st) {
         const size = Math.min(st.width(), st.height());
         changeScale(svg, size, size);
             
-        const dim = getDimensions(svg);
-
+        // get offset dependend on quali
         let offset = 0;
-        if (quali == "arb" || quali == "const") {
+        if (quali == C.ARB || quali == C.CONST) {
             offset = -0.1;
         }
+
+        // push into position
+        const dim = getDimensions(svg);
         svg.translateX(st.centerX() - dim.width/2 + offset);
         svg.translateY(st.centerY());
 
@@ -47,6 +62,11 @@ export function drawCuboidQualiUnitZ(scene, st) {
     loadSVG(quali, placeSVG);
 }
 
+/**
+ * Draws the quality st.zq on the ground on the z-axis.
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Statement} st 
+ */
 export function drawCuboidQualiZ(scene, st) {
     const quali = st.zq;
     const placeSVG = (svg) => {
@@ -54,7 +74,7 @@ export function drawCuboidQualiZ(scene, st) {
         const size = Math.min(st.width(), st.depth());
         changeScale(svg, size, size);
 
-        if (quali == "mono" || quali == "anti") {
+        if (quali == C.MONO || quali == C.ANTI) {
             svg.translateZ(0.15);
         }
 
@@ -77,6 +97,11 @@ export function drawCuboidQualiZ(scene, st) {
     loadSVG(quali, placeSVG);
 }
 
+/**
+ * Draws the quality st.xq on the ground on the x-axis.
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Statement} st 
+ */
 export function drawCuboidQualiX(scene, st) {
     const quali = st.xq;
     const placeSVG = (svg) => {
@@ -103,6 +128,11 @@ export function drawCuboidQualiX(scene, st) {
     loadSVG(quali, placeSVG);
 }
 
+/**
+ * Loads the svg from imgs/name.svg and places it using the callback planFn.
+ * @param {string} name 
+ * @callback placeFn Should place the svg in the scene.
+ */
 function loadSVG(name, placeFn) {
     const loader = new SVGLoader();
     const group = new THREE.Group();
@@ -124,10 +154,12 @@ function loadSVG(name, placeFn) {
         // resize it to a base size
         const dim = getDimensions(group)
         group.scale.set(1/dim.height*0.2, 1/dim.width*0.2, 0);
-        if (name == "arb") {
+        if (name == C.ARB) {
             changeScale(group, 0.6, 1);
         }
-        if (name == "arb" || name == "const") {
+
+        // fix some offset
+        if (name == C.ARB || name == C.CONST) {
             group.translateZ(0.1);
         }
 
@@ -135,6 +167,20 @@ function loadSVG(name, placeFn) {
     });
 };
 
+/**
+ * @typedef Dimensions
+ * @property {THREE.Box3} box bounding box
+ * @property {number} width
+ * @property {number} height
+ * @property {number} depth
+ * 
+ */
+
+/**
+ * 
+ * @param {THREE.Group} svg 
+ * @returns {Dimensions}
+ */
 function getDimensions(svg) {
     const box = new THREE.Box3().setFromObject(svg);
     return {
@@ -145,10 +191,21 @@ function getDimensions(svg) {
     };
 }
 
+/**
+ * Resolves the name to a path.
+ * @param {string} quali 
+ * @returns {string}
+ */
 function qualiToPath(quali) {
     return `imgs/${quali}.svg`;
 }
 
+/**
+ * Rescales the svg on x and y according to its params.
+ * @param {THREE.Group} svg 
+ * @param {number} sizeX 
+ * @param {number} sizeY 
+ */
 function changeScale(svg, sizeX, sizeY) {
     const a = svg.scale;
     svg.scale.set(a.x*sizeX, a.y*sizeY, 0);
