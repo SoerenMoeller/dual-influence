@@ -1,6 +1,17 @@
 import * as THREE from "three";
 import * as SVG from "./svg.js";
-import * as typedef from "./typedefs.js";
+import * as typedef from "../typedefs.js";
+
+/**
+ * Draws all statements.
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Scheme[]} scheme 
+ */
+export function drawScheme(scene, scheme) {
+    for (const st of scheme.statements) {
+        drawCuboid(scene, st);
+    }
+}
 
 /**
  * Draws a statement as a cuboid. Also draws the qualities on the bottom.
@@ -8,7 +19,7 @@ import * as typedef from "./typedefs.js";
  * @param {THREE.Scene} scene 
  * @param {typedef.Statement} st 
  */
-export function draw(scene, st) {
+function drawCuboid(scene, st) {
     const geometry = new THREE.BoxGeometry( 
         st.x[1] - st.x[0], 
         st.y[1] - st.y[0], 
@@ -25,6 +36,7 @@ export function draw(scene, st) {
     edges.translateX(width/2 + st.x[0]);
     edges.translateY(height/2 + st.y[0]);
     edges.translateZ(depth/2 + st.z[0]);
+    edges.name = st.name();
     scene.add(edges);
 
     if (width != 0 && depth != 0) {

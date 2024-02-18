@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import * as C from "./constants.js";
-import * as typedef from "./typedefs.js";
+import * as C from "../constants.js";
+import * as typedef from "../typedefs.js";
 
 /**
  * Draws the coordinate system.

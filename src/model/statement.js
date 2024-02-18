@@ -1,4 +1,4 @@
-import * as typedef from "./typedefs";
+import * as typedef from "../typedefs";
 
 /**
  * Adds usefull methods to statements and changes access to them.
@@ -28,5 +28,8 @@ export const create = (st) => ({
     },
     centerZ() {
         return this.z[0] + this.depth() / 2;
+    },
+    name() {
+        return `<${this.x}|${this.z}|${this.xq}|${this.zq}|${this.y}>`;
     }
 });

@@ -1,5 +1,5 @@
 import * as ST from "./statement.js"
-import * as typedef from "./typedefs.js";
+import * as typedef from "../typedefs.js";
 
 /**
  * Reads scheme from json file (under path), adds bounds for the axes 
@@ -22,12 +22,13 @@ export async function setup(path) {
         }
     }
 
-    return fetch(path)
+    const scheme = await fetch(path)
         .then(response => response.json())
         .then(data => processModel(data))
         .catch(error => console.error('Error fetching JSON:', error));
-}
 
+    return scheme;
+}
 
 /**
  * Returns the min and max bounds of all statements on the axis with the 
@@ -43,3 +44,4 @@ function getBounds(rawModel, index) {
         Math.max(...sts.map(x => x[index][1]))
     ]
 }
+

@@ -1,7 +1,7 @@
 import { SVGLoader } from "three/addons/loaders/SVGLoader";
 import * as THREE from "three";
-import * as C from "./constants.js";
-import * as typedef from "./typedefs.js";
+import * as C from "../constants.js";
+import * as typedef from "../typedefs.js";
 
 /**
  * Draws the quali st.zq in the center of the cuboid with width 0.
@@ -23,6 +23,7 @@ export function drawCuboidQualiUnitX(scene, st) {
         const posZ = st.centerZ() + dim.depth/2;
         svg.position.set(posX, posY, posZ);
 
+        svg.name = `${st.name()}qz`;
         scene.add(svg);
     };
 
@@ -48,6 +49,7 @@ export function drawCuboidQualiUnitZ(scene, st) {
         const posZ = st.z[1] + dim.box.min.z/2;
         svg.position.set(posX, posY, posZ);
 
+        svg.name = `${st.name()}qx`;
         scene.add(svg);
     };
 
@@ -76,6 +78,7 @@ export function drawCuboidQualiZ(scene, st) {
         const posZ = st.centerZ() + dim.depth/2;
         svg.position.set(posX, posY, posZ);
 
+        svg.name = `${st.name()}qz`;
         scene.add(svg);
     };
 
@@ -104,6 +107,7 @@ export function drawCuboidQualiX(scene, st) {
         const posZ = st.z[1] + dim.box.min.z/2;
         svg.position.set(posX, posY, posZ);
 
+        svg.name = `${st.name()}qx`;
         scene.add(svg);
     };
 

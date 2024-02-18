@@ -1,15 +1,13 @@
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import * as THREE from "three";
-import * as CS from "./src/coordinate-system.js";
-import * as CUBOID from "./src/cuboid.js";
-import * as SCHEME from "./src/scheme.js";
+import * as CS from "./src/visualization/coordinate-system.js";
+import * as CUBOID from "./src/visualization/cuboid.js";
+import * as SCHEME from "./src/model/scheme.js";
 
 const scene = setupScene();
 const scheme = await SCHEME.setup("data/example2.json");
-CS.draw(scene, scheme);
-for (const st of scheme.statements) {
-    CUBOID.draw(scene, st);
-}
+CS.draw(scene, scheme)
+CUBOID.drawScheme(scene, scheme);
 
 let dotGeometry = new THREE.BufferGeometry();
 dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([1,0,0]), 3));
@@ -32,8 +30,6 @@ scene.add(dot);
 function setupScene() {
     const scene = new THREE.Scene();
     const canvas = document.getElementById("drawArea");
-    console.log(canvas);
-    console.log(canvas.innerWidth);
     const camera = new THREE.PerspectiveCamera( 75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000 );
     const renderer = new THREE.WebGLRenderer({
         alpha: true,
