@@ -74,23 +74,16 @@ export function drawCuboidQualiZ(scene, st) {
         const size = Math.min(st.width(), st.depth());
         changeScale(svg, size, size);
 
-        if (quali == C.MONO || quali == C.ANTI) {
-            svg.translateZ(0.15);
-        }
-
         // rotate on ground
         svg.rotateX(Math.PI / 2);
 
-        // calculate position shift
+        // set position
         const dim = getDimensions(svg);
-        const xPos = (st.z[1] + st.z[0]) / 2;
-        let negativeArea = Math.min(0, st.z[1]) - Math.max(0, st.z[0]);
-        let shift = xPos - negativeArea - dim.depth/2;
+        const posX = st.x[0] + dim.box.min.x/2;
+        const posY = st.y[0];
+        const posZ = st.centerZ() + dim.depth/2;
+        svg.position.set(posX, posY, posZ);
 
-        // shift into position
-        svg.translateX(dim.box.min.x - st.x[1]);
-        svg.translateY(shift);
-        svg.translateZ(-st.y[0]);
         scene.add(svg);
     };
 
@@ -112,16 +105,13 @@ export function drawCuboidQualiX(scene, st) {
         // rotate on ground
         svg.rotateX(Math.PI / 2);
 
-        // calculate position shift
+        // set position
         const dim = getDimensions(svg);
-        const xPos = (st.x[1] + st.x[0]) / 2;
-        let negativeArea = Math.min(0, st.x[1]) - Math.max(0, st.x[0]);
-        let shift = xPos - negativeArea - dim.width/2;
+        const posX = st.centerX() - dim.width/2;
+        const posY = st.y[0];
+        const posZ = st.z[1] + dim.box.min.z/2;
+        svg.position.set(posX, posY, posZ);
 
-        // shift into position
-        svg.translateX(shift);
-        svg.translateY(dim.box.max.y + st.z[1] - dim.width/2);
-        svg.translateZ(-st.y[0]);
         scene.add(svg);
     };
 

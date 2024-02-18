@@ -25,4 +25,4 @@ npx vite
 ```
 
 ### Building examples
-An easy (but not automated) way if building examples is examining a 3d-Plot and showing some gridlines. I used [c3d](https://c3d.libretexts.org/CalcPlot3D/index.html).
+An easy (but not automated) way to build examples is examining a 3d-Plot and showing some gridlines. I used [c3d](https://c3d.libretexts.org/CalcPlot3D/index.html).
