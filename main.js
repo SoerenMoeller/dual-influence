@@ -42,7 +42,7 @@ function setupScene() {
     });
     renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
     //renderer.setSize( window.innerWidth * 0.7, window.innerHeight * 0.7);
-    scene.background = new THREE.Color( 0xffffff ); 
+    scene.background = new THREE.Color( 0xd3d3d3 ); 
 
     camera.position.y = 30;
     camera.lookAt(0, 0, 0);
