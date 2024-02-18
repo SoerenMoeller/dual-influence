@@ -15,9 +15,9 @@ export async function setup(path) {
             z: rawModel.z,
             statements: rawModel.statements.map(ST.create),
             bounds: {
-                x: getBounds(rawModel, "x"),
-                y: getBounds(rawModel, "y"),
-                z: getBounds(rawModel, "z")
+                x: getBounds(rawModel, 0),
+                y: getBounds(rawModel, 4),
+                z: getBounds(rawModel, 1)
             }
         }
     }
@@ -28,16 +28,18 @@ export async function setup(path) {
         .catch(error => console.error('Error fetching JSON:', error));
 }
 
+
 /**
- * Returns the min and max bounds of all statements on the axis named key.
- * @param {typedef.Scheme} rawModel 
+ * Returns the min and max bounds of all statements on the axis with the 
+ * given index.
+ * @param {Object} rawModel 
  * @param {string} key 
  * @returns {number[]}
  */
-function getBounds(rawModel, key) {
+function getBounds(rawModel, index) {
     const sts = rawModel.statements;
     return [
-        Math.min(...sts.map(x => x[key][0])), 
-        Math.max(...sts.map(x => x[key][1]))
+        Math.min(...sts.map(x => x[index][0])), 
+        Math.max(...sts.map(x => x[index][1]))
     ]
 }

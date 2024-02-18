@@ -6,7 +6,7 @@ import * as SCHEME from "./src/scheme.js";
 
 
 const scene = setupScene();
-const scheme = await SCHEME.setup("data/example2.json");
+const scheme = await SCHEME.setup("data/example.json");
 CS.draw(scene, scheme);
 for (const st of scheme.statements) {
     CUBOID.draw(scene, st);
@@ -44,9 +44,7 @@ function setupScene() {
     scene.background = new THREE.Color( 0xffffff ); 
 
     camera.position.y = 30;
-    camera.position.z = -5;
-    camera.position.x = -5;
-    camera.lookAt(-10, 0, -10);
+    camera.lookAt(0, 0, 0);
 
     // Camera controls
     const controls = new OrbitControls(camera, renderer.domElement);
