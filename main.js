@@ -6,7 +6,7 @@ import * as SCHEME from "./src/scheme.js";
 
 
 const scene = setupScene();
-const scheme = await SCHEME.setup("data/example.json");
+const scheme = await SCHEME.setup("data/example2.json");
 CS.draw(scene, scheme);
 for (const st of scheme.statements) {
     CUBOID.draw(scene, st);

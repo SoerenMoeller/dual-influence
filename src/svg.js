@@ -140,11 +140,6 @@ function loadSVG(name, placeFn) {
             changeScale(group, 0.6, 1);
         }
 
-        // fix some offset
-        if (name == C.ARB || name == C.CONST) {
-            group.translateZ(0.1);
-        }
-
         placeFn(group);
     });
 };
