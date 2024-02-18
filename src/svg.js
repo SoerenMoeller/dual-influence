@@ -16,16 +16,12 @@ export function drawCuboidQualiUnitX(scene, st) {
         changeScale(svg, size, size);
         svg.rotateY(Math.PI / 2);
 
-        // get offset dependend on quali
-        let offset = 0;
-        if (quali == C.ARB || quali == C.CONST) {
-            offset = -0.1;
-        }
-
-        // push into position
+        // set position
         const dim = getDimensions(svg);
-        svg.translateX(st.centerZ() - dim.width/2 + offset);
-        svg.translateY(st.centerY());
+        const posX = st.x[0] + dim.box.min.x/2;
+        const posY = st.y[0] + st.height()/2;
+        const posZ = st.centerZ() + dim.depth/2;
+        svg.position.set(posX, posY, posZ);
 
         scene.add(svg);
     };
@@ -45,16 +41,12 @@ export function drawCuboidQualiUnitZ(scene, st) {
         const size = Math.min(st.width(), st.height());
         changeScale(svg, size, size);
             
-        // get offset dependend on quali
-        let offset = 0;
-        if (quali == C.ARB || quali == C.CONST) {
-            offset = -0.1;
-        }
-
-        // push into position
+        // set position
         const dim = getDimensions(svg);
-        svg.translateX(st.centerX() - dim.width/2 + offset);
-        svg.translateY(st.centerY());
+        const posX = st.centerX() - dim.width/2;
+        const posY = st.y[0] + st.height()/2;
+        const posZ = st.z[1] + dim.box.min.z/2;
+        svg.position.set(posX, posY, posZ);
 
         scene.add(svg);
     };

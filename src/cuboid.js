@@ -40,30 +40,3 @@ export function draw(scene, st) {
         SVG.drawCuboidQualiUnitZ(scene, st);
     }
 }
-
-/*
-
-,
-        {
-            "x": [-16, -10.5],
-            "z": [-11, -8],
-            "y": [-1.5, 1],
-            "xq": "anti",
-            "zq": "anti"
-        },
-        {
-            "x": [-16, -12],
-            "z": [-8.5, -5],
-            "y": [-1.5, 0.5],
-            "xq": "anti",
-            "zq": "mono"
-        },
-        {
-            "x": [-16, -11.5],
-            "z": [-4.5, 0],
-            "y": [-1, 2.5],
-            "xq": "arb",
-            "zq": "mono"
-        } 
-
-        */
