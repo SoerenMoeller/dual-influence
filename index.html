@@ -4,11 +4,47 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>My first three.js app</title>
+		<title>Dual Influence Visualizer</title>
 
-        <link rel="stylesheet" href="/styles/reset.css">
+        <link rel="stylesheet" href="/reset.css">
+        <link rel="stylesheet" href="/styles.css">
         <script type="module" src="/main.js"></script>
 	</head>
 	<body>
+    <div id="container">
+        <main>
+            <canvas id="drawArea"></canvas>
+        </main>
+        <div id="main-seperator"><div></div></div>
+        <div id="sidebar">
+            <div id="heading-container">
+                <h2>Dual Influence Visualizer</h2>
+            </div>
+            <div id="heading-seperator"></div>
+            <div>
+                <div>Interactive Mode</div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div>
+                <div>Show Grid</div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div>
+                <div>Select example</div>
+                <select name="example-picker" id="example-picker">
+                    <option value="example">example</option>
+                    <option value="example2">example2</option>
+                </select>
+            </div>
+            <div>Normalize</div>
+            <div>Build Connector</div>
+        </div>
+    </div>
 	</body>
 </html>
