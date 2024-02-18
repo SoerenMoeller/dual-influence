@@ -25,4 +25,4 @@ npx vite
 ```
 
 ### Building examples
-An easy (but not automated) way to build examples is examining a 3d-Plot and showing some gridlines. I used [c3d](https://c3d.libretexts.org/CalcPlot3D/index.html).
+A (not automated) way to build examples is examining a 3D-Plot and showing some gridlines. I used [c3d](https://c3d.libretexts.org/CalcPlot3D/index.html) with the function `7xy/e^(x^2 + y^2)` and `Number of Gridlines = 9`. The result is in [data/example2.json](data/example2.json). 
