@@ -77,11 +77,7 @@ export function normalize(scheme) {
             const overlappingX = xOverlapMap.get(x);
             sts = JS.intersectSet(overlappingX, overlappingZ);
             
-            console.log(x, z);
             const ys = ST.intersectY(sts);
-            if (sts.length == 0) {
-                //debugger;
-            }
             let newSt = ST.addFunctions({
                 x: [x, x],
                 z: [z, z],

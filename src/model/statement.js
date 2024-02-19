@@ -54,7 +54,7 @@ function intersectIv(ivA, ivB) {
     if (ivA === undefined || ivB === undefined ) {
         return;
     }
-    if (ivA[0] <= ivB[1] && ivA[1] <= ivB[0]) {
+    if (!(ivA[0] <= ivB[1] && ivA[1] >= ivB[0])) {
         return;
     }
 
@@ -77,6 +77,7 @@ export function intersectY(sts) {
         sts[0].y);
 
     if (iv === undefined) {
+        console.log(sts);
         throw new Error("Range not overlapping.")
     }
 
