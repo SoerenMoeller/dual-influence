@@ -36,6 +36,9 @@ export const addFunctions = (st) => ({
     name() {
         return `<[${this.x}]|[${this.z}]|${this.xq}|${this.zq}|[${this.y}]>`;
     },
+    nameC() {
+        return `${this.name()}C`;
+    },
     nameXQ() {
         return `${this.name()}xq`;
     },

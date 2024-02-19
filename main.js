@@ -9,7 +9,8 @@ const SETTINGS = {
     showGrid: false,
     gridSize: 1,
     example: "example2",
-    interactiveMode: false
+    interactiveMode: false,
+    opacity: 0.3
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
@@ -23,12 +24,14 @@ async function main() {
     const exampleSelect = document.getElementById("example-picker");
     const normalizeButton = document.getElementById("normalize-button");
     const connectorButton = document.getElementById("connector-button");
+    const stOpacityPicker = document.getElementById("st-opacity");
 
     // default values
     interactiveCheckBox.checked = SETTINGS.interactiveMode;
     showGridCheckBox.checked = SETTINGS.showGrid;
     gridSizeNumberField.value = SETTINGS.gridSize;
     exampleSelect.value = SETTINGS.example;
+    stOpacityPicker.value = SETTINGS.opacity;
 
     // event listeners
     interactiveCheckBox.addEventListener("change", (e) => {
@@ -52,6 +55,10 @@ async function main() {
         } 
     });
     exampleSelect.addEventListener("change", (e) => loadSchemeFromFile());
+    stOpacityPicker.addEventListener("change", (e) => {
+        SETTINGS.opacity = stOpacityPicker.value;
+        RESET.changeOpacity(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
+    });
     normalizeButton.addEventListener("click", (e) => {
         SCHEME.normalize(SETTINGS.scheme);
     });
@@ -96,7 +103,7 @@ export function loadScheme(scheme) {
     if (SETTINGS.showGrid) {
         CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
     } 
-    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme);
+    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
 
     changeCameraMode();
 }

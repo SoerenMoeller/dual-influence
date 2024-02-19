@@ -1,13 +1,22 @@
+export function changeOpacity(scene, scheme, opacity) {
+    for (const st of scheme.statements) {
+        const statement = scene.getObjectByName(st.nameC());
+        statement.material.opacity = opacity;
+    }
+}
+
 export function resetScheme(scene, scheme) {
     resetGrid(scene);
     resetCS(scene);
 
     for (const st of scheme.statements) {
         const statement = scene.getObjectByName(st.name());
+        const statementCube = scene.getObjectByName(st.nameC());
         const xQuali = scene.getObjectByName(st.nameXQ());
         const zQuali = scene.getObjectByName(st.nameZQ());
 
         scene.remove(statement);
+        scene.remove(statementCube);
         if (xQuali !== undefined) {
             scene.remove(xQuali);
         }
