@@ -1,6 +1,5 @@
 import * as ST from "./statement.js"
 import * as typedef from "../typedefs.js";
-import { build } from "vite";
 
 /**
  * Reads scheme from json file (under path), adds bounds for the axes 
