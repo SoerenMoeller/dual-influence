@@ -1,5 +1,6 @@
 import * as ST from "./statement.js"
 import * as typedef from "../typedefs.js";
+import * as MAIN from "../../main.js";
 
 /**
  * Reads scheme from json file (under path), adds bounds for the axes 
@@ -13,7 +14,7 @@ export async function setup(path) {
             x: rawModel.x,
             y: rawModel.y, 
             z: rawModel.z,
-            statements: rawModel.statements.map(ST.create),
+            statements: [...new Set(rawModel.statements.map(ST.create))],
             bounds: {
                 x: getBounds(rawModel, 0),
                 y: getBounds(rawModel, 4),
@@ -45,7 +46,7 @@ function getBounds(rawModel, index) {
     ]
 }
 
-export function normalize(scene, scheme) {
+export function normalize(scheme) {
     if (scheme.statements.length > 0 && Array.isArray(scheme.statements[0])) {
         return; // already normalized
     }
@@ -55,7 +56,27 @@ export function normalize(scene, scheme) {
     const yBounds = getSortedBounds(sts, "y");
     const xOverlapMap = buildOverlapMap(sts, "x");
     const yOverlapMap = buildOverlapMap(sts, "y");
-    console.log(xOverlapMap);
+    extendOverlapMap(xBounds, xOverlapMap);
+    extendOverlapMap(yBounds, yOverlapMap);
+
+    const newScheme = {...scheme}
+    newScheme.statements = [];
+    MAIN.loadScheme(newScheme);
+}
+
+function extendOverlapMap(bounds, overlapMap) {
+    const cache = new Set(); 
+    for (const bound of bounds) {
+        const cacheCpy = new Set(cache);
+
+        for (const st of overlapMap.get(bound)) {
+            cache.add(st);
+        }
+        for (const st of cacheCpy) {
+            cache.delete(st);
+            overlapMap.get(bound).add(st);
+        }
+    }
 }
 
 function buildOverlapMap(sts, name) {
@@ -66,24 +87,21 @@ function buildOverlapMap(sts, name) {
         const upper = st[name][1];
 
         if (map.has(lower)) {
-            map.set(lower, addToArray(map.get(lower), st));
+            map.set(lower, map.get(lower).add(st));
         } else {
-            map.set(lower, [st]);
+            map.set(lower, new Set([st]));
         }
         if (map.has(upper)) {
-            map.set(upper, addToArray(map.get(upper), st));
+            map.set(upper, map.get(upper).add(st));
         } else {
-            map.set(upper, [st]);
+            map.set(upper, new Set([st]));
         }
     }
+
+    return map;
 }
 
 function getSortedBounds(sts, name) {
     const bounds = sts.map(e => e[name][0]).concat(sts.map(e => e[name][1]));
     return [...new Set(bounds)].sort((a, b) => a - b);
-}
-
-function addToArray(arr, elem) {
-    arr.push(elem);
-    return arr;
 }

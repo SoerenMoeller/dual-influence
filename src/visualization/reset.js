@@ -6,7 +6,6 @@ export function resetScheme(scene, scheme) {
         const statement = scene.getObjectByName(st.name());
         const xQuali = scene.getObjectByName(st.nameXQ());
         const zQuali = scene.getObjectByName(st.nameZQ());
-        console.log(xQuali);
 
         scene.remove(statement);
         if (xQuali !== undefined) {

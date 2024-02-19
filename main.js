@@ -51,9 +51,9 @@ async function main() {
             CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
         } 
     });
-    exampleSelect.addEventListener("change", (e) => loadScheme());
+    exampleSelect.addEventListener("change", (e) => loadSchemeFromFile());
     normalizeButton.addEventListener("click", (e) => {
-        SCHEME.normalize(SETTINGS.scene, SETTINGS.scheme);
+        SCHEME.normalize(SETTINGS.scheme);
     });
     connectorButton.addEventListener("click", (e) => {
 
@@ -61,7 +61,7 @@ async function main() {
 
     // load default
     setupScene();
-    loadScheme();
+    loadSchemeFromFile();
 }
 
 function changeCameraMode() {
@@ -86,14 +86,12 @@ function changeCameraMode() {
     }
 }
 
-async function loadScheme() {
-    const exampleSelect = document.getElementById("example-picker");
-    const path = `data/${exampleSelect.value}.json`;
+export function loadScheme(scheme) {
     if (Object.hasOwn(SETTINGS, "scheme")) {
         RESET.resetScheme(SETTINGS.scene , SETTINGS.scheme);
     }
 
-    SETTINGS.scheme = await SCHEME.setup(path);
+    SETTINGS.scheme = scheme
     CS.drawCS(SETTINGS.scene, SETTINGS.scheme);
     if (SETTINGS.showGrid) {
         CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
@@ -101,6 +99,17 @@ async function loadScheme() {
     CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme);
 
     changeCameraMode();
+}
+
+async function loadSchemeFromFile() {
+    const exampleSelect = document.getElementById("example-picker");
+    const path = `data/${exampleSelect.value}.json`;
+    if (Object.hasOwn(SETTINGS, "scheme")) {
+        RESET.resetScheme(SETTINGS.scene , SETTINGS.scheme);
+    }
+
+    const scheme = await SCHEME.setup(path);
+    loadScheme(scheme)
 }
 
 function setupScene() {
