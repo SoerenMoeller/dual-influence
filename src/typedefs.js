@@ -14,7 +14,7 @@ import * as THREE from "three";
  * @property {string} x 
  * @property {string} y
  * @property {string} z 
- * @property {Statement[]} statements 
+ * @property {Statement[] | Statement[][]} statements 
  * @property {number[]} bounds
  */
 

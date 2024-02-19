@@ -8,7 +8,7 @@ import * as RESET from "./src/visualization/reset.js";
 const SETTINGS = {
     showGrid: false,
     gridSize: 1,
-    example: "example",
+    example: "example2",
     interactiveMode: false
 }
 
@@ -21,7 +21,16 @@ async function main() {
     const showGridCheckBox = document.getElementById("show-grid-checkbox");
     const gridSizeNumberField = document.getElementById("grid-size");
     const exampleSelect = document.getElementById("example-picker");
+    const normalizeButton = document.getElementById("normalize-button");
+    const connectorButton = document.getElementById("connector-button");
 
+    // default values
+    interactiveCheckBox.checked = SETTINGS.interactiveMode;
+    showGridCheckBox.checked = SETTINGS.showGrid;
+    gridSizeNumberField.value = SETTINGS.gridSize;
+    exampleSelect.value = SETTINGS.example;
+
+    // event listeners
     interactiveCheckBox.addEventListener("change", (e) => {
         SETTINGS.interactiveMode = interactiveCheckBox.checked;
         changeCameraMode()
@@ -43,7 +52,14 @@ async function main() {
         } 
     });
     exampleSelect.addEventListener("change", (e) => loadScheme());
+    normalizeButton.addEventListener("click", (e) => {
+        SCHEME.normalize(SETTINGS.scene, SETTINGS.scheme);
+    });
+    connectorButton.addEventListener("click", (e) => {
 
+    });
+
+    // load default
     setupScene();
     loadScheme();
 }

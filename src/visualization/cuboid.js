@@ -8,7 +8,7 @@ import * as typedef from "../typedefs.js";
  * @param {typedef.Scheme[]} scheme 
  */
 export function drawScheme(scene, scheme) {
-    for (const st of scheme.statements) {
+    for (const st of scheme.statements.flat()) {
         drawCuboid(scene, st);
     }
 }
