@@ -1,4 +1,5 @@
 import * as typedef from "../typedefs";
+import * as C from "../constants.js";
 
 /**
  * Create internal representation for statements.
@@ -47,10 +48,39 @@ export const addFunctions = (st) => ({
     }
 });
 
-function qualiMin(stA, stB, axis) {
-    const qA = stA[`${axis}q`];
-    const qB = stB[`${axis}q`];
 
+export function qualiMin(sts, axis) {
+    sts = [...sts];
+    return sts.reduce(
+        (accumulator, currentValue) => qualiMin2(accumulator, currentValue[axis + "q"]),
+        C.ARB
+    );
+}
+
+function qualiMin2(qualiA, qualiB) {
+    const map = new Map()
+        .set(C.MONO,  new Map()
+            .set(C.MONO, C.MONO)
+            .set(C.ANTI, C.CONST)
+            .set(C.ARB, C.MONO)
+            .set(C.CONST, C.CONST))
+        .set(C.ANTI,  new Map()
+            .set(C.MONO, C.CONST)
+            .set(C.ANTI, C.ANTI)
+            .set(C.ARB, C.ANTI)
+            .set(C.CONST, C.CONST))
+        .set(C.ARB,  new Map()
+            .set(C.MONO, C.MONO)
+            .set(C.ANTI, C.ANTI)
+            .set(C.ARB, C.ARB)
+            .set(C.CONST, C.CONST))
+        .set(C.CONST,  new Map()
+            .set(C.MONO, C.CONST)
+            .set(C.ANTI, C.CONST)
+            .set(C.ARB, C.CONST)
+            .set(C.CONST, C.CONST))
+        
+    return map.get(qualiA).get(qualiB);
 }
 
 function intersectIv(ivA, ivB) {
@@ -80,7 +110,6 @@ export function intersectY(sts) {
         sts[0].y);
 
     if (iv === undefined) {
-        console.log(sts);
         throw new Error("Range not overlapping.")
     }
 

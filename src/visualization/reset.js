@@ -1,7 +1,10 @@
 export function changeOpacity(scene, scheme, opacity) {
-    for (const st of scheme.statements) {
-        const statement = scene.getObjectByName(st.nameC());
-        statement.material.opacity = opacity;
+    const sts = scheme.statements.flat();
+    for (const st of sts) {
+        if (st.width() != 0 || st.depth() != 0) {
+            const statement = scene.getObjectByName(st.nameC());
+            statement.material.opacity = opacity;
+        }
     }
 }
 

@@ -74,10 +74,10 @@ export function normalize(scheme) {
             const nextX = xBounds[j + 1];
             
             // create dot statement
-            const overlappingX = xOverlapMap.get(x);
+            let overlappingX = xOverlapMap.get(x);
             sts = JS.intersectSet(overlappingX, overlappingZ);
             
-            const ys = ST.intersectY(sts);
+            let ys = ST.intersectY(sts);
             let newSt = ST.addFunctions({
                 x: [x, x],
                 z: [z, z],
@@ -86,12 +86,25 @@ export function normalize(scheme) {
                 zq: C.CONST
             });
             row.push(newSt);
+
+            overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+            sts = JS.intersectSet(overlappingX, overlappingZ);
+            ys = ST.intersectY(sts);
+            const quali = ST.qualiMin(sts, "x");
+
+            newSt = ST.addFunctions({
+                x: [x, nextX],
+                z: [z, z],
+                y: ys,
+                xq: quali,
+                zq: C.CONST
+            });
+            row.push(newSt);
         }
         newScheme.statements.push(row);
     }
 
     MAIN.loadScheme(newScheme);
-    console.log(newScheme);
 }
 
 function extendOverlapMap(bounds, overlapMap, name) {
