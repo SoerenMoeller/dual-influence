@@ -25,6 +25,7 @@ async function main() {
     const normalizeButton = document.getElementById("normalize-button");
     const connectorButton = document.getElementById("connector-button");
     const stOpacityPicker = document.getElementById("st-opacity");
+    const mousePositionField = document.getElementById("mouse-position");
 
     // default values
     interactiveCheckBox.checked = SETTINGS.interactiveMode;
@@ -64,6 +65,25 @@ async function main() {
     });
     connectorButton.addEventListener("click", (e) => {
 
+    });
+    document.addEventListener("mousemove", (e) => {
+        var vec = new THREE.Vector3(); // create once and reuse
+        var pos = new THREE.Vector3(); // create once and reuse
+
+        vec.set(
+        ( e.clientX / SETTINGS.canvas.offsetWidth ) * 2 - 1,
+        - ( e.clientY / SETTINGS.canvas.offsetHeight ) * 2 + 1,
+        0.5,
+        );
+            
+        vec.unproject( SETTINGS.camera );
+            
+        vec.sub( SETTINGS.camera.position ).normalize();
+            
+        var distance = - SETTINGS.camera.position.z / vec.z;
+            
+        pos.copy( SETTINGS.camera.position ).add( vec.multiplyScalar( distance ) );
+        mousePositionField.innerHTML = `x: ${pos.x.toFixed(2)}, z: ${pos.y.toFixed(2)}`;
     });
 
     // load default
@@ -121,14 +141,14 @@ async function loadSchemeFromFile() {
 
 function setupScene() {
     SETTINGS.scene = new THREE.Scene();
-    const canvas = document.getElementById("drawArea");
-    SETTINGS.camera = new THREE.PerspectiveCamera( 75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000 );
+    SETTINGS.canvas = document.getElementById("drawArea");
+    SETTINGS.camera = new THREE.PerspectiveCamera( 75, SETTINGS.canvas.offsetWidth / SETTINGS.canvas.offsetHeight, 0.1, 1000 );
     const renderer = new THREE.WebGLRenderer({
         alpha: true,
         antialias: true,
-        canvas: canvas
+        canvas: SETTINGS.canvas
     });
-    renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+    renderer.setSize(SETTINGS.canvas.offsetWidth, SETTINGS.canvas.offsetHeight);
     SETTINGS.scene.background = new THREE.Color( 0xd3d3d3 ); 
     
     // Camera controls

@@ -50,6 +50,20 @@ main {
     border-top: 1px solid black;
 }
 
+#mouse-position {
+    min-width: 10rem;
+    height: 2rem;
+    background-color: white;
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
 .flex-space-between {
     display: flex;
     align-items: center;
@@ -71,6 +85,7 @@ main {
     width: 40%;
     font-size: 0.1rem;
     cursor: pointer;
+    user-select: none;
 }
 
 .button:hover {
