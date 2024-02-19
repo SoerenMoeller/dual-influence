@@ -30,6 +30,12 @@ export const create = (st) => ({
         return this.z[0] + this.depth() / 2;
     },
     name() {
-        return `<${this.x}|${this.z}|${this.xq}|${this.zq}|${this.y}>`;
+        return `<[${this.x}]|[${this.z}]|${this.xq}|${this.zq}|[${this.y}]>`;
+    },
+    nameXQ() {
+        return `${this.name()}xq`;
+    },
+    nameZQ() {
+        return `${this.name()}zq`;
     }
 });

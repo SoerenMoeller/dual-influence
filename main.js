@@ -3,57 +3,110 @@ import * as THREE from "three";
 import * as CS from "./src/visualization/coordinate-system.js";
 import * as CUBOID from "./src/visualization/cuboid.js";
 import * as SCHEME from "./src/model/scheme.js";
+import * as RESET from "./src/visualization/reset.js";
 
-const scene = setupScene();
-const scheme = await SCHEME.setup("data/example2.json");
-CS.draw(scene, scheme)
-CUBOID.drawScheme(scene, scheme);
+const SETTINGS = {
+    showGrid: false,
+    gridSize: 1,
+    example: "example",
+    interactiveMode: false
+}
 
-let dotGeometry = new THREE.BufferGeometry();
-dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([1,0,0]), 3));
-let dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0xff0000 });
-let dot = new THREE.Points(dotGeometry, dotMaterial);
-scene.add(dot);
+document.addEventListener("DOMContentLoaded", (e) => {
+    main();
+});
 
-dotGeometry = new THREE.BufferGeometry();
-dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,1,0]), 3));
-dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0x00ff00 });
-dot = new THREE.Points(dotGeometry, dotMaterial);
-scene.add(dot);
+async function main() {
+    const interactiveCheckBox = document.getElementById("interactive-checkbox");
+    const showGridCheckBox = document.getElementById("show-grid-checkbox");
+    const gridSizeNumberField = document.getElementById("grid-size");
+    const exampleSelect = document.getElementById("example-picker");
 
-dotGeometry = new THREE.BufferGeometry();
-dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,1]), 3));
-dotMaterial = new THREE.PointsMaterial({ size: 0.1, color: 0x0000ff });
-dot = new THREE.Points(dotGeometry, dotMaterial);
-scene.add(dot);
+    interactiveCheckBox.addEventListener("change", (e) => {
+        SETTINGS.interactiveMode = interactiveCheckBox.checked;
+        changeCameraMode()
+    });
+    gridSizeNumberField.addEventListener("change", (e) => {
+        SETTINGS.gridSize = gridSizeNumberField.value;
+
+        RESET.resetGrid(SETTINGS.scene);
+        if (SETTINGS.showGrid) {
+            CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
+        } 
+    });
+    showGridCheckBox.addEventListener("change", (e) => {
+        SETTINGS.showGrid = showGridCheckBox.checked;
+
+        RESET.resetGrid(SETTINGS.scene);
+        if (SETTINGS.showGrid) {
+            CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
+        } 
+    });
+    exampleSelect.addEventListener("change", (e) => loadScheme());
+
+    setupScene();
+    await loadScheme();
+    changeCameraMode();
+}
+
+function changeCameraMode() {
+    const interactive = SETTINGS.interactiveMode;
+    SETTINGS.controls.enableRotate = interactive;
+    SETTINGS.controls.enableZoom = interactive;
+    SETTINGS.controls.enablePan = interactive;
+    SETTINGS.controls.autoRotate = !interactive;
+
+    if (!interactive) {
+        // this could be improved by determining the camera distance to the
+        // center of the coordinate system using its fov.
+        let x = 0;
+        let y = 4 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
+        let z = 2 * SETTINGS.scheme.bounds.z[1] - SETTINGS.scheme.bounds.z[0];
+        SETTINGS.camera.position.set(x, y, z);
+
+        x = SETTINGS.scheme.bounds.x[1]; - SETTINGS.scheme.bounds.x[0];
+        y = SETTINGS.scheme.bounds.y[1]; - SETTINGS.scheme.bounds.y[0];
+        z = SETTINGS.scheme.bounds.z[1]; - SETTINGS.scheme.bounds.z[0];
+        SETTINGS.camera.lookAt(x, y, z);
+    }
+}
+
+async function loadScheme() {
+    const exampleSelect = document.getElementById("example-picker");
+    const path = `data/${exampleSelect.value}.json`;
+    if (Object.hasOwn(SETTINGS, "scheme")) {
+        RESET.resetScheme(SETTINGS.scene , SETTINGS.scheme);
+    }
+
+    SETTINGS.scheme = await SCHEME.setup(path);
+    CS.drawCS(SETTINGS.scene, SETTINGS.scheme);
+    if (SETTINGS.showGrid) {
+        CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
+    } 
+    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme);
+}
 
 function setupScene() {
-    const scene = new THREE.Scene();
+    SETTINGS.scene = new THREE.Scene();
     const canvas = document.getElementById("drawArea");
-    const camera = new THREE.PerspectiveCamera( 75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000 );
+    SETTINGS.camera = new THREE.PerspectiveCamera( 75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000 );
     const renderer = new THREE.WebGLRenderer({
         alpha: true,
         antialias: true,
         canvas: canvas
     });
     renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-    //renderer.setSize( window.innerWidth * 0.7, window.innerHeight * 0.7);
-    scene.background = new THREE.Color( 0xd3d3d3 ); 
-
-    camera.position.y = 30;
-    camera.lookAt(0, 0, 0);
-
+    SETTINGS.scene.background = new THREE.Color( 0xd3d3d3 ); 
+    
     // Camera controls
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableZoom = true;
-    controls.enablePan = true;
+    SETTINGS.controls = new OrbitControls(SETTINGS.camera, renderer.domElement);
+    SETTINGS.controls.enableDamping = true;
+    SETTINGS.controls.autoRotateSpeed = -2.0;
 
     function animate() {
         requestAnimationFrame( animate );
-        controls.update();
-        renderer.render( scene, camera );
+        SETTINGS.controls.update();
+        renderer.render( SETTINGS.scene, SETTINGS.camera );
     }
     animate();
-
-    return scene;
 }

@@ -1,3 +1,7 @@
+h2 {
+    font-size: 3rem;
+}
+
 #container {
     height: 100%;
     max-height: 100%;
@@ -7,24 +11,29 @@
 }
 
 main {
-    width: 70vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75vw;
     height: 100%;
-    padding: 2rem;
 }
 
 #main-seperator {
-    padding: 2rem 0;
+    padding: 5rem 2rem;
 }
 
 #main-seperator > div {
     height: 100%;
-    border-left: 2px solid black;
+    border-left: 1px solid black;
 }
 
 #sidebar {
-    width: 30vw;
+    width: 25vw;
     height: 100%;
     padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 #drawArea {
@@ -32,12 +41,52 @@ main {
     height: 100%;
 }
 
+#heading-seperator {
+    padding: 2rem 0rem;
+}
+
+#heading-seperator > div {
+    width: 100%;
+    border-top: 1px solid black;
+}
+
+.flex-space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1rem; 
+}
+
+.flex-space-between > div {
+    font-size: 1.3rem;
+}
+
+.button {
+    background-color: #21a67f;
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    font-size: 0.1rem;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #24b88b;
+}
+
+.height-100 {
+    max-height: 100%;
+}
+
 /* The switch - the box around the slider */
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    width: 50px;
+    height: 24px;
   }
   
   /* Hide default HTML checkbox */
@@ -55,7 +104,7 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: #828282;
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -63,8 +112,8 @@ main {
   .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
+    height: 16px;
+    width: 16px;
     left: 4px;
     bottom: 4px;
     background-color: white;
@@ -73,11 +122,11 @@ main {
   }
   
   input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #21a67f;
   }
   
   input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #21a67f;
   }
   
   input:checked + .slider:before {

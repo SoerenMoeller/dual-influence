@@ -38,16 +38,16 @@ function drawCuboid(scene, st) {
     edges.translateZ(depth/2 + st.z[0]);
     edges.name = st.name();
     scene.add(edges);
-
+    
     if (width != 0 && depth != 0) {
         SVG.drawCuboidQualiX(scene, st);
         SVG.drawCuboidQualiZ(scene, st);
     }
-
+    
     if (width == 0 && depth != 0) {
         SVG.drawCuboidQualiUnitX(scene, st);
     }
-
+    
     if (width != 0 && depth == 0) {
         SVG.drawCuboidQualiUnitZ(scene, st);
     }

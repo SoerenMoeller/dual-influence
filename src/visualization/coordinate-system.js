@@ -7,10 +7,27 @@ import * as typedef from "../typedefs.js";
  * @param {THREE.Scene} scene 
  * @param {typedef.Scheme} scheme 
  */
-export function draw(scene, scheme) {
+export function drawCS(scene, scheme) {
     const axes = createAxes(scheme);
     drawAxes(scene, axes);
-    drawGrid(scene, axes);
+}
+
+/**
+ * Draws a grid.
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Scheme} scheme 
+ * @param {number} stepSize
+ */
+export function drawGrid(scene, scheme, stepSize) {
+    const [xAxis, yAxis, zAxis] = createAxes(scheme);
+    const container = new THREE.Group();
+
+    drawGridDimension(container, stepSize, xAxis, yAxis, zAxis);
+    drawGridDimension(container, stepSize, yAxis, zAxis, xAxis);
+    drawGridDimension(container, stepSize, zAxis, xAxis, yAxis);
+    
+    container.name = "grid";
+    scene.add(container);
 }
 
 /**
@@ -48,20 +65,9 @@ function drawAxes(scene, axes) {
         // TODO: Make arrow-head size universal?
         const arrow = new THREE.ArrowHelper(axis.dir, origin, length, C.BLACK, length*0.05);
         arrow.line.material.linewidth = 2;
+        arrow.name = `${axis.name}-axis`;
         scene.add(arrow);
     }
-}
-
-/**
- * Draws a grid in the coordination system.
- * @param {THREE.Scene} scene 
- * @param {typedef.Axis} axes 
- */
-function drawGrid(scene, axes) {
-    const [xAxis, yAxis, zAxis] = axes;
-    drawGridDimension(scene, xAxis, yAxis, zAxis);
-    drawGridDimension(scene, yAxis, zAxis, xAxis);
-    drawGridDimension(scene, zAxis, xAxis, yAxis);
 }
 
 /**
@@ -78,31 +84,31 @@ function range(start, stop, step = 1) {
 }
 
 /**
- * Draws all grid lines parallel to axisA.
- * @param {THREE.Scene} scene 
+ * Draws all grid lines parallel to axisA with distance stepSize.
+ * @param {THREE.Group} container 
+ * @param {number} stepSize
  * @param {typedef.Axis} axisA 
  * @param {typedef.Axis} axisB 
  * @param {typedef.Axis} axisC 
  */
-function drawGridDimension(scene, axisA, axisB, axisC) {
-    const stepSize = 1;
+function drawGridDimension(container, stepSize, axisA, axisB, axisC) {
     for (const valB of range(axisB.minBound, axisB.maxBound, stepSize)) {
         for (const valC of range(axisC.minBound, axisC.maxBound, stepSize)) {
             const offsetB = axisB.dir.clone().multiplyScalar(valB);
             const offsetC = axisC.dir.clone().multiplyScalar(valC);
             offsetB.add(offsetC);
-            drawDottedLine(scene, axisA, offsetB);
+            drawDottedLine(container, axisA, offsetB);
         }    
     }
 }
 
 /**
  * Draws a dotted line in parallel to axis according to the offset.
- * @param {THREE.Scene} scene 
+ * @param {THREE.Group} container 
  * @param {typedef.Axis} axis 
  * @param {THREE.Vector3} offset 
  */
-function drawDottedLine(scene, axis, offset) {
+function drawDottedLine(container, axis, offset) {
     if (offset.equals(new THREE.Vector3(0, 0, 0))) {
         return;
     }
@@ -122,5 +128,5 @@ function drawDottedLine(scene, axis, offset) {
     const line = new THREE.Line(geometry, material);
     line.computeLineDistances();
 
-    scene.add(line);
+    container.add(line);
 }

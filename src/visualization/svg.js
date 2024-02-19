@@ -23,7 +23,7 @@ export function drawCuboidQualiUnitX(scene, st) {
         const posZ = st.centerZ() + dim.depth/2;
         svg.position.set(posX, posY, posZ);
 
-        svg.name = `${st.name()}qz`;
+        svg.name = st.nameZQ();
         scene.add(svg);
     };
 
@@ -49,7 +49,7 @@ export function drawCuboidQualiUnitZ(scene, st) {
         const posZ = st.z[1] + dim.box.min.z/2;
         svg.position.set(posX, posY, posZ);
 
-        svg.name = `${st.name()}qx`;
+        svg.name = st.nameXQ();
         scene.add(svg);
     };
 
@@ -78,7 +78,7 @@ export function drawCuboidQualiZ(scene, st) {
         const posZ = st.centerZ() + dim.depth/2;
         svg.position.set(posX, posY, posZ);
 
-        svg.name = `${st.name()}qz`;
+        svg.name = st.nameZQ();
         scene.add(svg);
     };
 
@@ -107,7 +107,7 @@ export function drawCuboidQualiX(scene, st) {
         const posZ = st.z[1] + dim.box.min.z/2;
         svg.position.set(posX, posY, posZ);
 
-        svg.name = `${st.name()}qx`;
+        svg.name = st.nameXQ();
         scene.add(svg);
     };
 

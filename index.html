@@ -15,39 +15,48 @@
         <main>
             <canvas id="drawArea"></canvas>
         </main>
-        <div id="main-seperator"><div></div></div>
+        <div id="main-seperator">
+            <div></div>
+        </div>
         <div id="sidebar">
-            <div id="heading-container">
-                <h2>Dual Influence Visualizer</h2>
-            </div>
-            <div id="heading-seperator"></div>
             <div>
-                <div>Interactive Mode</div>
-                <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider round"></span>
-                </label>
+                <div id="heading-container">
+                    <h2>Dual Influence</h2>
+                    <h2>Visualizer</h2>
+                </div>
+                <div id="heading-seperator">
+                    <div></div>
+                </div>
+                <div class="flex-space-between">
+                    <div>Interactive Mode</div>
+                    <label class="switch">
+                        <input type="checkbox" id="interactive-checkbox">>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="flex-space-between">
+                    <div>Show Grid</div>
+                    <label class="switch">
+                        <input type="checkbox" id="show-grid-checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="flex-space-between">
+                    <div>Grid Size</div>
+                    <input type="number" id="grid-size" name="grid-size" min="1" max="5" value="1">
+                </div>
+                <div class="flex-space-between">
+                    <div>Select example</div>
+                    <select name="example-picker" id="example-picker">
+                        <option value="example">example</option>
+                        <option value="example2">example2</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <div>Show Grid</div>
-                <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider round"></span>
-                </label>
+            <div class="flex-space-between">
+                <div class="button">Normalize</div>
+                <div class="button">Build Connector</div>
             </div>
-            <div>
-                <div>Grid Size</div>
-                <input type="number" id="quantity" name="quantity" min="1" max="5">
-            </div>
-            <div>
-                <div>Select example</div>
-                <select name="example-picker" id="example-picker">
-                    <option value="example">example</option>
-                    <option value="example2">example2</option>
-                </select>
-            </div>
-            <div>Normalize</div>
-            <div>Build Connector</div>
         </div>
     </div>
 	</body>
