@@ -2,6 +2,7 @@ import * as ST from "./statement.js"
 import * as typedef from "../typedefs.js";
 import * as MAIN from "../../main.js";
 import * as JS from "../js-helper.js";
+import * as C from "../constants.js";
 
 /**
  * Reads scheme from json file (under path), adds bounds for the axes 
@@ -52,13 +53,13 @@ export function normalize(scheme) {
         return; // already normalized
     }
 
-    const sts = scheme.statements;
+    let sts = scheme.statements;
     const xBounds = getSortedBounds(sts, "x");
     const zBounds = getSortedBounds(sts, "z");
     const xOverlapMap = buildOverlapMap(sts, "x");
     const zOverlapMap = buildOverlapMap(sts, "z");
-    extendOverlapMap(xBounds, xOverlapMap);
-    extendOverlapMap(zBounds, zOverlapMap);
+    extendOverlapMap(xBounds, xOverlapMap, "x");
+    extendOverlapMap(zBounds, zOverlapMap, "z");
 
     const newScheme = {...scheme};
     newScheme.statements = [];
@@ -66,37 +67,49 @@ export function normalize(scheme) {
         const z = zBounds[i];
         const nextZ = zBounds[i + 1];
         const overlappingZ = zOverlapMap.get(z);
+        const row = [];
 
         for (const j of JS.range(0, xBounds.length - 1)) {
             const x = xBounds[j];
             const nextX = xBounds[j + 1];
-            const row = [];
             
-            const newSt = ST.addFunctions({
-                x: [x, nextX],
-                y: [0, 1],
+            // create dot statement
+            const overlappingX = xOverlapMap.get(x);
+            sts = JS.intersectSet(overlappingX, overlappingZ);
+            
+            console.log(x, z);
+            const ys = ST.intersectY(sts);
+            if (sts.length == 0) {
+                //debugger;
+            }
+            let newSt = ST.addFunctions({
+                x: [x, x],
                 z: [z, z],
-                xq: "mono",
-                zq: "const"
+                y: ys,
+                xq: C.CONST,
+                zq: C.CONST
             });
             row.push(newSt);
-            newScheme.statements.push(row);
         }
+        newScheme.statements.push(row);
     }
 
     MAIN.loadScheme(newScheme);
+    console.log(newScheme);
 }
 
-function extendOverlapMap(bounds, overlapMap) {
+function extendOverlapMap(bounds, overlapMap, name) {
     const cache = new Set(); 
     for (const bound of bounds) {
-        const cacheCpy = new Set(cache);
-
         for (const st of overlapMap.get(bound)) {
-            cache.add(st);
+            if (cache.has(st)) {
+                cache.delete(st);
+            } else {
+                cache.add(st);
+            }
         }
-        for (const st of cacheCpy) {
-            cache.delete(st);
+
+        for (const st of cache) {
             overlapMap.get(bound).add(st);
         }
     }

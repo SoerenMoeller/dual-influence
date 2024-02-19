@@ -1,8 +1,8 @@
-export function intersection(setA, setB) {
+export function intersectSet(setA, setB) {
     return new Set([...setA].filter(x => setB.has(x)));
 }
 
-export function union(setA, setB) {
+export function unionSet(setA, setB) {
     return new Set([...setA], [...setB]);
 }
 
