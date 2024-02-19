@@ -3,6 +3,11 @@ import * as THREE from "three";
 import * as C from "../constants.js";
 import * as typedef from "../typedefs.js";
 
+const SVG = {};
+for (const quali of [C.MONO, C.ANTI, C.ARB, C.CONST]) {
+    loadSVG(quali);
+}
+
 /**
  * Draws the quali st.zq in the center of the cuboid with width 0.
  * @param {THREE.Scene} scene 
@@ -10,24 +15,21 @@ import * as typedef from "../typedefs.js";
  */
 export function drawCuboidQualiUnitX(scene, st) {
     const quali = st.zq;
-    const placeSVG = (svg) => {
-        // change size dependent on statement
-        const size = Math.min(st.height(), st.depth());
-        changeScale(svg, size, size);
-        svg.rotateY(Math.PI / 2);
+    const svg = SVG[quali].clone();
+    // change size dependent on statement
+    const size = Math.min(st.height(), st.depth());
+    changeScale(svg, size, size);
+    svg.rotateY(Math.PI / 2);
 
-        // set position
-        const dim = getDimensions(svg);
-        const posX = st.x[0] + dim.box.min.x/2;
-        const posY = st.y[0] + st.height()/2;
-        const posZ = st.centerZ() + dim.depth/2;
-        svg.position.set(posX, posY, posZ);
+    // set position
+    const dim = getDimensions(svg);
+    const posX = st.x[0] + dim.box.min.x/2;
+    const posY = st.y[0] + st.height()/2;
+    const posZ = st.centerZ() + dim.depth/2;
+    svg.position.set(posX, posY, posZ);
 
-        svg.name = st.nameZQ();
-        scene.add(svg);
-    };
-
-    loadSVG(quali, placeSVG);
+    svg.name = st.nameZQ();
+    scene.add(svg);
 }
 
 /**
@@ -37,23 +39,20 @@ export function drawCuboidQualiUnitX(scene, st) {
  */
 export function drawCuboidQualiUnitZ(scene, st) {
     const quali = st.xq;
-    const placeSVG = (svg) => {
-        // change size dependent on statement
-        const size = Math.min(st.width(), st.height());
-        changeScale(svg, size, size);
+    const svg = SVG[quali].clone();
+    // change size dependent on statement
+    const size = Math.min(st.width(), st.height());
+    changeScale(svg, size, size);
             
-        // set position
-        const dim = getDimensions(svg);
-        const posX = st.centerX() - dim.width/2;
-        const posY = st.y[0] + st.height()/2;
-        const posZ = st.z[1] + dim.box.min.z/2;
-        svg.position.set(posX, posY, posZ);
+    // set position
+    const dim = getDimensions(svg);
+    const posX = st.centerX() - dim.width/2;
+    const posY = st.y[0] + st.height()/2;
+    const posZ = st.z[1] + dim.box.min.z/2;
+    svg.position.set(posX, posY, posZ);
 
-        svg.name = st.nameXQ();
-        scene.add(svg);
-    };
-
-    loadSVG(quali, placeSVG);
+    svg.name = st.nameXQ();
+    scene.add(svg);
 }
 
 /**
@@ -63,26 +62,24 @@ export function drawCuboidQualiUnitZ(scene, st) {
  */
 export function drawCuboidQualiZ(scene, st) {
     const quali = st.zq;
-    const placeSVG = (svg) => {
-        // change size dependent on statement
-        const size = Math.min(st.width(), st.depth());
-        changeScale(svg, size, size);
+    const svg = SVG[quali].clone();
+        
+    // change size dependent on statement
+    const size = Math.min(st.width(), st.depth());
+    changeScale(svg, size, size);
 
-        // rotate on ground
-        svg.rotateX(Math.PI / 2);
+    // rotate on ground
+    svg.rotateX(Math.PI / 2);
 
-        // set position
-        const dim = getDimensions(svg);
-        const posX = st.x[0] + dim.box.min.x/2;
-        const posY = st.y[0];
-        const posZ = st.centerZ() + dim.depth/2;
-        svg.position.set(posX, posY, posZ);
+    // set position
+    const dim = getDimensions(svg);
+    const posX = st.x[0] + dim.box.min.x/2;
+    const posY = st.y[0];
+    const posZ = st.centerZ() + dim.depth/2;
+    svg.position.set(posX, posY, posZ);
 
-        svg.name = st.nameZQ();
-        scene.add(svg);
-    };
-
-    loadSVG(quali, placeSVG);
+    svg.name = st.nameZQ();
+    scene.add(svg);
 }
 
 /**
@@ -92,34 +89,31 @@ export function drawCuboidQualiZ(scene, st) {
  */
 export function drawCuboidQualiX(scene, st) {
     const quali = st.xq;
-    const placeSVG = (svg) => {
-        // change size dependent on statement
-        const size = Math.min(st.width(), st.depth());
-        changeScale(svg, size, size);
+    const svg = SVG[quali].clone();
 
-        // rotate on ground
-        svg.rotateX(Math.PI / 2);
+    // change size dependent on statement
+    const size = Math.min(st.width(), st.depth());
+    changeScale(svg, size, size);
 
-        // set position
-        const dim = getDimensions(svg);
-        const posX = st.centerX() - dim.width/2;
-        const posY = st.y[0];
-        const posZ = st.z[1] + dim.box.min.z/2;
-        svg.position.set(posX, posY, posZ);
+    // rotate on ground
+    svg.rotateX(Math.PI / 2);
 
-        svg.name = st.nameXQ();
-        scene.add(svg);
-    };
+    // set position
+    const dim = getDimensions(svg);
+    const posX = st.centerX() - dim.width/2;
+    const posY = st.y[0];
+    const posZ = st.z[1] + dim.box.min.z/2;
+    svg.position.set(posX, posY, posZ);
 
-    loadSVG(quali, placeSVG);
+    svg.name = st.nameXQ();
+    scene.add(svg);
 }
 
 /**
  * Loads the svg from imgs/name.svg and places it using the callback planFn.
  * @param {string} name 
- * @callback placeFn Should place the svg in the scene.
  */
-function loadSVG(name, placeFn) {
+function loadSVG(name) {
     const loader = new SVGLoader();
     const group = new THREE.Group();
     const path = qualiToPath(name);
@@ -143,9 +137,9 @@ function loadSVG(name, placeFn) {
         if (name == C.ARB) {
             changeScale(group, 0.6, 1);
         }
-
-        placeFn(group);
     });
+
+    SVG[name] = group;
 };
 
 /**
