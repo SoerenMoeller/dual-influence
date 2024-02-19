@@ -63,12 +63,12 @@ export function normalize(scheme) {
 
     const newScheme = {...scheme};
     newScheme.statements = [];
-    for (const i of JS.range(0, zBounds.length)) {
+    for (const i of JS.range(0, zBounds.length - 1)) {
         const z = zBounds[i];
         const nextZ = zBounds[i + 1];
         const overlappingZ = zOverlapMap.get(z);
-        const row = [];
 
+        let row = [];
         for (const j of JS.range(0, xBounds.length - 1)) {
             const x = xBounds[j];
             const nextX = xBounds[j + 1];
@@ -100,6 +100,77 @@ export function normalize(scheme) {
                 zq: C.CONST
             });
             row.push(newSt);
+
+            if (j == xBounds.length - 2) {
+                let overlappingX = xOverlapMap.get(nextX);
+                sts = JS.intersectSet(overlappingX, overlappingZ);
+                
+                let ys = ST.intersectY(sts);
+                let newSt = ST.addFunctions({
+                    x: [x, x],
+                    z: [z, z],
+                    y: ys,
+                    xq: C.CONST,
+                    zq: C.CONST
+                });
+                row.push(newSt);
+            }
+        }
+        newScheme.statements.push(row);
+
+        row = [];
+        for (const j of JS.range(0, xBounds.length - 1)) {
+            const x = xBounds[j];
+            const nextX = xBounds[j + 1];
+            
+            // create unitX statement
+            let overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+            let overlappingX = xOverlapMap.get(x);
+            let qualiZ = ST.qualiMin(sts, "z");
+            sts = JS.intersectSet(overlappingX, overlappingZ);
+            
+            let ys = ST.intersectY(sts);
+            let newSt = ST.addFunctions({
+                x: [x, x],
+                z: [z, nextZ],
+                y: ys,
+                xq: C.CONST,
+                zq: qualiZ
+            });
+            row.push(newSt);
+
+            overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+            overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+            sts = JS.intersectSet(overlappingX, overlappingZ);
+            ys = ST.intersectY(sts);
+            qualiZ = ST.qualiMin(sts, "z");
+            const qualiX = ST.qualiMin(sts, "x")
+
+            newSt = ST.addFunctions({
+                x: [x, nextX],
+                z: [z, nextZ],
+                y: ys,
+                xq: qualiX,
+                zq: qualiZ
+            });
+            row.push(newSt);
+
+            if (j == xBounds.length - 2) {
+                overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+                overlappingX = xOverlapMap.get(x);
+                qualiZ = ST.qualiMin(sts, "z");
+                sts = JS.intersectSet(overlappingX, overlappingZ);
+                
+                ys = ST.intersectY(sts);
+                newSt = ST.addFunctions({
+                    x: [x, x],
+                    z: [z, nextZ],
+                    y: ys,
+                    xq: C.CONST,
+                    zq: qualiZ
+                });
+                row.push(newSt);
+            }
         }
         newScheme.statements.push(row);
     }
