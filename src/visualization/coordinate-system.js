@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import * as C from "../constants.js";
 import * as typedef from "../typedefs.js";
+import * as JS from "../js-helper.js";
 
 /**
  * Draws the coordinate system.
@@ -73,19 +74,6 @@ function drawAxes(scene, axes) {
 }
 
 /**
- * Creates range array.
- * @param {number} start 
- * @param {number} stop 
- * @param {number} step 
- * @returns {number[]}
- */
-function range(start, stop, step = 1) {
-    return Array(Math.ceil((stop + 1 - start) / step))
-        .fill(start)
-        .map((x, y) => x + y * step);
-}
-
-/**
  * Draws all grid lines parallel to axisA with distance stepSize.
  * @param {THREE.Group} container 
  * @param {number} stepSize
@@ -94,8 +82,8 @@ function range(start, stop, step = 1) {
  * @param {typedef.Axis} axisC 
  */
 function drawGridDimension(container, stepSize, axisA, axisB, axisC) {
-    for (const valB of range(axisB.minBound, axisB.maxBound, stepSize)) {
-        for (const valC of range(axisC.minBound, axisC.maxBound, stepSize)) {
+    for (const valB of JS.range(axisB.minBound, axisB.maxBound + 1, stepSize)) {
+        for (const valC of JS.range(axisC.minBound, axisC.maxBound + 1, stepSize)) {
             const offsetB = axisB.dir.clone().multiplyScalar(valB);
             const offsetC = axisC.dir.clone().multiplyScalar(valC);
             offsetB.add(offsetC);

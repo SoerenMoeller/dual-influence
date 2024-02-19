@@ -1,16 +1,20 @@
 import * as typedef from "../typedefs";
 
 /**
- * Adds usefull methods to statements and changes access to them.
+ * Create internal representation for statements.
  * @param {Object} st 
  * @returns {typedef.Statement}
  */
-export const create = (st) => ({
+export const create = (st) => addFunctions({
     x: st[0],
     z: st[1],
     xq: st[2],
     zq: st[3],
-    y: st[4], 
+    y: st[4]
+});
+
+export const addFunctions = (st) => ({
+    ...st,
     width() {
         return this.x[1] - this.x[0];
     },

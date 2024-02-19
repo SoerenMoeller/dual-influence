@@ -1,6 +1,7 @@
 import * as ST from "./statement.js"
 import * as typedef from "../typedefs.js";
 import * as MAIN from "../../main.js";
+import * as JS from "../js-helper.js";
 
 /**
  * Reads scheme from json file (under path), adds bounds for the axes 
@@ -53,14 +54,36 @@ export function normalize(scheme) {
 
     const sts = scheme.statements;
     const xBounds = getSortedBounds(sts, "x");
-    const yBounds = getSortedBounds(sts, "y");
+    const zBounds = getSortedBounds(sts, "z");
     const xOverlapMap = buildOverlapMap(sts, "x");
-    const yOverlapMap = buildOverlapMap(sts, "y");
+    const zOverlapMap = buildOverlapMap(sts, "z");
     extendOverlapMap(xBounds, xOverlapMap);
-    extendOverlapMap(yBounds, yOverlapMap);
+    extendOverlapMap(zBounds, zOverlapMap);
 
-    const newScheme = {...scheme}
+    const newScheme = {...scheme};
     newScheme.statements = [];
+    for (const i of JS.range(0, zBounds.length)) {
+        const z = zBounds[i];
+        const nextZ = zBounds[i + 1];
+        const overlappingZ = zOverlapMap.get(z);
+
+        for (const j of JS.range(0, xBounds.length - 1)) {
+            const x = xBounds[j];
+            const nextX = xBounds[j + 1];
+            const row = [];
+            
+            const newSt = ST.addFunctions({
+                x: [x, nextX],
+                y: [0, 1],
+                z: [z, z],
+                xq: "mono",
+                zq: "const"
+            });
+            row.push(newSt);
+            newScheme.statements.push(row);
+        }
+    }
+
     MAIN.loadScheme(newScheme);
 }
 
