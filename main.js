@@ -45,8 +45,7 @@ async function main() {
     exampleSelect.addEventListener("change", (e) => loadScheme());
 
     setupScene();
-    await loadScheme();
-    changeCameraMode();
+    loadScheme();
 }
 
 function changeCameraMode() {
@@ -60,8 +59,8 @@ function changeCameraMode() {
         // this could be improved by determining the camera distance to the
         // center of the coordinate system using its fov.
         let x = 0;
-        let y = 4 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
-        let z = 2 * SETTINGS.scheme.bounds.z[1] - SETTINGS.scheme.bounds.z[0];
+        let y = 2 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
+        let z = SETTINGS.scheme.bounds.z[1] - SETTINGS.scheme.bounds.z[0];
         SETTINGS.camera.position.set(x, y, z);
 
         x = SETTINGS.scheme.bounds.x[1]; - SETTINGS.scheme.bounds.x[0];
@@ -84,6 +83,8 @@ async function loadScheme() {
         CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
     } 
     CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme);
+
+    changeCameraMode();
 }
 
 function setupScene() {

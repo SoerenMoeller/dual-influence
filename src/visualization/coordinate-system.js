@@ -44,8 +44,10 @@ function createAxes(model) {
 
     // extract bounds
     for (const axis of axes) {
-        axis.minBound = Math.min(model.bounds[axis.name][0], 0) - 1;
-        axis.maxBound = Math.max(model.bounds[axis.name][1], 0) + 1;
+        axis.minBound = Math.min(model.bounds[axis.name][0], 0) - 
+            Math.max((model.bounds[axis.name][1] - model.bounds[axis.name][0]) * 0.3, 1);
+        axis.maxBound = Math.max(model.bounds[axis.name][1], 0) + 
+            Math.max((model.bounds[axis.name][1] - model.bounds[axis.name][0]) * 0.3, 1);
     }
 
     return axes;
@@ -63,7 +65,7 @@ function drawAxes(scene, axes) {
         const length = axis.maxBound - axis.minBound;
 
         // TODO: Make arrow-head size universal?
-        const arrow = new THREE.ArrowHelper(axis.dir, origin, length, C.BLACK, length*0.05);
+        const arrow = new THREE.ArrowHelper(axis.dir, origin, length, C.GREEN, length*0.05);
         arrow.line.material.linewidth = 2;
         arrow.name = `${axis.name}-axis`;
         scene.add(arrow);
