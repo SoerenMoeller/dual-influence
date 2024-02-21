@@ -3,6 +3,8 @@ import * as C from "../constants.js";
 import * as typedef from "../typedefs.js";
 import * as JS from "../js-helper.js";
 
+// look into axis helper?
+
 /**
  * Draws the coordinate system.
  * @param {THREE.Scene} scene 

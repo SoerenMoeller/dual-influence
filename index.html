@@ -65,4 +65,60 @@
         </div>
     </div>
 	</body>
+
+    <script type="x-shader/x-vertex" id="vertex-shader">
+        attribute vec3 aPosition;
+        attribute vec3 aColor;
+  
+        varying vec3 vColor;
+  
+        varying vec3 vNormal;
+        void main(){
+          vColor = aColor;
+  
+          vNormal = normal;
+  
+          vec3 transformed = position.xyz;
+          transformed += aPosition;
+          gl_Position = projectionMatrix* modelViewMatrix * vec4(transformed, 1.);
+        }
+  </script>
+  <script type="x-shader/x-vertex" id="vertex-shader-scale">
+        attribute vec3 aPosition;
+        attribute vec3 aColor;
+        attribute vec3 aScale;
+  
+        varying vec3 vColor;
+  
+        varying vec3 vNormal;
+        void main(){
+          vColor = aColor;
+  
+          vNormal = normal;
+  
+          //vec3 transformed = position.xyz * 2.0;
+          //transformed = transformed + aPosition;
+          vec3 transformed = position.xyz * aScale;
+          transformed += aPosition;
+          gl_Position = projectionMatrix* modelViewMatrix * vec4(transformed, 1.);
+        }
+  </script>
+  <script type="x-shader/x-vertex" id="fragment-shader">
+    uniform vec3 color;
+        varying vec3 vColor;
+  
+        vec3 lightColor = vec3(1.0, 1.0, 1.0);
+        uniform vec3 lightDirection;
+  
+        varying vec3 vNormal;
+        void main(){
+          vec3 norm = normalize(vNormal);
+  
+          float nDotL = clamp(dot(lightDirection, norm), 0.0, 1.0);
+  
+          vec4 diffuseColor = vec4(lightColor, 1.0) * vec4(vColor, 1.0) * nDotL;
+  
+          gl_FragColor = vec4( color * vColor, 1.0) * diffuseColor;
+        }
+  </script>
 </html>
