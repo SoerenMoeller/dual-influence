@@ -3,156 +3,129 @@ import * as THREE from "three";
 import * as C from "../constants.js";
 import * as typedef from "../typedefs.js";
 
+const SVG_BASESCALE = 0.00025;
 const SVG = {};
 for (const quali of [C.MONO, C.ANTI, C.ARB, C.CONST]) {
     loadSVG(quali);
 }
 
+export function drawUnitZQualities(scene, sts) {
+    drawUnitZSVGs(scene, sts, C.MONO);
+    drawUnitZSVGs(scene, sts, C.ANTI);
+    drawUnitZSVGs(scene, sts, C.CONST);
+    drawUnitZSVGs(scene, sts, C.ARB);
+}
+
+function drawUnitZSVGs(scene, sts, quali) {
+    const transform = {
+        axis: "x",
+        posX: (st, dim) => st.centerX() - dim.width/2,
+        posY: (st, dim) => st.y[0] + st.height()/2,
+        posZ: (st, dim) => st.z[1] + dim.box.min.z/2,
+        scale: (st) => Math.min(st.width(), st.height()),
+        rotate: [0, 0, 0]
+    }
+
+    drawCuboidSVGs(scene, sts, quali, transform);
+}
+
+export function drawUnitXQualities(scene, sts) {
+    drawUnitXSVGs(scene, sts, C.MONO);
+    drawUnitXSVGs(scene, sts, C.ANTI);
+    drawUnitXSVGs(scene, sts, C.CONST);
+    drawUnitXSVGs(scene, sts, C.ARB);
+}
+
+function drawUnitXSVGs(scene, sts, quali) {
+    const transform = {
+        axis: "z",
+        posX: (st, dim) => st.x[0] + dim.box.min.x/2,
+        posY: (st, dim) => st.y[0] + st.height()/2,
+        posZ: (st, dim) => st.centerZ() + dim.depth/2,
+        scale: (st) => Math.min(st.height(), st.depth()),
+        rotate: [0, Math.PI/2, 0]
+    }
+
+    drawCuboidSVGs(scene, sts, quali, transform);
+}
+
 export function drawCuboidQualities(scene, sts) {
+    const transformX = {
+        axis: "x",
+        posX: (st, dim) => st.centerX() - dim.width/2,
+        posY: (st, dim) => st.y[0],
+        posZ: (st, dim) => st.z[1] + dim.box.min.z/2,
+        scale: (st) => Math.min(st.width(), st.depth()),
+        rotate: [Math.PI/2, 0, 0]
+    }
+    drawCuboidSVGs(scene, sts, C.MONO, transformX);
+    drawCuboidSVGs(scene, sts, C.ANTI, transformX);
+    drawCuboidSVGs(scene, sts, C.CONST, transformX);
+    drawCuboidSVGs(scene, sts, C.ARB, transformX);
+
+    const transformZ = {
+        axis: "z",
+        posX: (st, dim) => st.x[0] + dim.box.min.x/2,
+        posY: (st, dim) => st.y[0],
+        posZ: (st, dim) => st.centerZ() + dim.depth/2,
+        scale: (st) => Math.min(st.width(), st.depth()),
+        rotate: [Math.PI/2, 0, 0]
+    }
+    drawCuboidSVGs(scene, sts, C.MONO, transformZ);
+    drawCuboidSVGs(scene, sts, C.ANTI, transformZ);
+    drawCuboidSVGs(scene, sts, C.CONST, transformZ);
+    drawCuboidSVGs(scene, sts, C.ARB, transformZ);
+}
+
+function drawCuboidSVGs(scene, sts, quali, transform) {
+    sts = sts.filter((st) => st[transform.axis + "q"] == quali);
+    console.log(transform);
+    console.log(sts);
     if (sts.length == 0) {
         return;
     }
-    
-    console.log(sts);
-    const stsMono = sts.filter((e) => {return e.xq == C.MONO});
-    console.log(stsMono);
-    console.log(SVG[C.MONO].geometry);
-    const ins = new THREE.InstancedBufferGeometry().copy(SVG[C.MONO].geometry);
-    ins.instanceCount = stsMono.length;
-    const mat = new THREE.MeshBasicMaterial({ 
+
+    const instancedGeom = new THREE.InstancedBufferGeometry().copy(SVG[quali].geometry);
+    instancedGeom.instanceCount = sts.length;
+    const material = new THREE.MeshBasicMaterial({ 
         color: 0x000000,
         onBeforeCompile: shader => {
             shader.vertexShader = document.getElementById('vertex-shader-rotate').textContent;
         } 
     });
 
-    const dim = getDimensions(SVG[C.MONO]);
-
     const instPos = [];
     const instScale = [];
     const instRotate = [];
     for (let i = 0; i < sts.length; i++) {
-        instPos.push(0,0,0);
-        instScale.push(0.0005, 0.0005, 0.0005);
-        instRotate.push(Math.PI/2, 0, 0);
+        const st = sts[i]
+        const dim = getDimensions(SVG[quali]);
+        console.log(transform.posX(st, dim), transform.posY(st, dim), transform.posZ(st, dim));
+        const posX = transform.posX(st, dim);
+        const posY = transform.posY(st, dim);
+        const posZ = transform.posZ(st, dim);
+
+        instPos.push(posX, posY, posZ);
+        instScale.push(SVG_BASESCALE*transform.scale(st), SVG_BASESCALE*transform.scale(st), 0);
+        instRotate.push(...transform.rotate);
     }
 
-    ins.setAttribute(
+    instancedGeom.setAttribute(
         "aScale",
         new THREE.InstancedBufferAttribute(new Float32Array(instScale), 3, false)
     );
-    ins.setAttribute(
+    instancedGeom.setAttribute(
         "aPosition",
         new THREE.InstancedBufferAttribute(new Float32Array(instPos), 3, false)
     );
-    ins.setAttribute(
+    instancedGeom.setAttribute(
         "rotation",
         new THREE.InstancedBufferAttribute(new Float32Array(instRotate), 3, false)
     );
     
-    const instEdges = new THREE.Mesh(ins, mat);
-    scene.add(instEdges);
-}
-
-/**
- * Draws the quali st.zq in the center of the cuboid with width 0.
- * @param {THREE.Scene} scene 
- * @param {typedef.Statement} st 
- */
-export function drawCuboidQualiUnitX(scene, st) {
-    const quali = st.zq;
-    const svg = SVG[quali].clone();
-    // change size dependent on statement
-    const size = Math.min(st.height(), st.depth());
-    changeScale(svg, size, size);
-    svg.rotateY(Math.PI / 2);
-
-    // set position
-    const dim = getDimensions(svg);
-    const posX = st.x[0] + dim.box.min.x/2;
-    const posY = st.y[0] + st.height()/2;
-    const posZ = st.centerZ() + dim.depth/2;
-    svg.position.set(posX, posY, posZ);
-
-    svg.name = st.nameZQ();
-    scene.add(svg);
-}
-
-/**
- * Draws the quali st.xq in the center of the cuboid with depth 0.
- * @param {THREE.Scene} scene 
- * @param {typedef.Statement} st 
- */
-export function drawCuboidQualiUnitZ(scene, st) {
-    const quali = st.xq;
-    const svg = SVG[quali].clone();
-    // change size dependent on statement
-    const size = Math.min(st.width(), st.height());
-    changeScale(svg, size, size);
-            
-    // set position
-    const dim = getDimensions(svg);
-    const posX = st.centerX() - dim.width/2;
-    const posY = st.y[0] + st.height()/2;
-    const posZ = st.z[1] + dim.box.min.z/2;
-    svg.position.set(posX, posY, posZ);
-
-    svg.name = st.nameXQ();
-    scene.add(svg);
-}
-
-/**
- * Draws the quality st.zq on the ground on the z-axis.
- * @param {THREE.Scene} scene 
- * @param {typedef.Statement} st 
- */
-export function drawCuboidQualiZ(scene, st) {
-    const quali = st.zq;
-    const svg = SVG[quali].clone();
-        
-    // change size dependent on statement
-    const size = Math.min(st.width(), st.depth());
-    changeScale(svg, size, size);
-
-    // rotate on ground
-    svg.rotateX(Math.PI / 2);
-
-    // set position
-    const dim = getDimensions(svg);
-    const posX = st.x[0] + dim.box.min.x/2;
-    const posY = st.y[0];
-    const posZ = st.centerZ() + dim.depth/2;
-    svg.position.set(posX, posY, posZ);
-
-    svg.name = st.nameZQ();
-    scene.add(svg);
-}
-
-/**
- * Draws the quality st.xq on the ground on the x-axis.
- * @param {THREE.Scene} scene 
- * @param {typedef.Statement} st 
- */
-export function drawCuboidQualiX(scene, st) {
-    const quali = st.xq;
-    const svg = SVG[quali].clone();
-
-    // change size dependent on statement
-    const size = Math.min(st.width(), st.depth());
-    changeScale(svg, size, size);
-
-    // rotate on ground
-    svg.rotateX(Math.PI / 2);
-
-    // set position
-    const dim = getDimensions(svg);
-    const posX = st.centerX() - dim.width/2;
-    const posY = st.y[0];
-    const posZ = st.z[1] + dim.box.min.z/2;
-    svg.position.set(posX, posY, posZ);
-
-    svg.name = st.nameXQ();
-    scene.add(svg);
+    const instMesh = new THREE.Mesh(instancedGeom, material);
+    scene.add(instMesh);
+    console.log("ADDEDDD " + sts.length);
 }
 
 //https://discourse.threejs.org/t/how-to-appoint-different-size-with-instancedbuffergeometry/27621

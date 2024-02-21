@@ -139,8 +139,8 @@
       //vec3 transformed = position.xyz * 2.0;
       //transformed = transformed + aPosition;
       vec3 transformed = position.xyz * aScale;
-      transformed += aPosition;
       transformed = (vec4(transformed, 1.0) * r).xyz;
+      transformed += aPosition;
       gl_Position = projectionMatrix* modelViewMatrix * vec4(transformed, 1.);
     }
 </script>

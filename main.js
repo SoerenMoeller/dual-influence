@@ -8,7 +8,7 @@ import * as RESET from "./src/visualization/reset.js";
 const SETTINGS = {
     showGrid: false,
     gridSize: 1,
-    example: "example",
+    example: "example2",
     interactiveMode: false,
     opacity: 0.3
 }
@@ -115,7 +115,7 @@ async function main() {
     exampleSelect.addEventListener("change", (e) => loadSchemeFromFile());
     stOpacityPicker.addEventListener("change", (e) => {
         SETTINGS.opacity = stOpacityPicker.value;
-        RESET.changeOpacity(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
+        RESET.changeOpacity(SETTINGS.scene, SETTINGS.opacity);
     });
     normalizeButton.addEventListener("click", (e) => {
         SCHEME.normalize(SETTINGS.scheme);
@@ -181,6 +181,9 @@ export function loadScheme(scheme) {
         CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
     } 
     CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
+    SETTINGS.scene.traverse( function( object ) {
+        object.frustumCulled = false;
+    } );
 
     changeCameraMode();
 }
