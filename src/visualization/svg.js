@@ -8,6 +8,52 @@ for (const quali of [C.MONO, C.ANTI, C.ARB, C.CONST]) {
     loadSVG(quali);
 }
 
+export function drawCuboidQualities(scene, sts) {
+    if (sts.length == 0) {
+        return;
+    }
+    
+    console.log(sts);
+    const stsMono = sts.filter((e) => {return e.xq == C.MONO});
+    console.log(stsMono);
+    console.log(SVG[C.MONO].geometry);
+    const ins = new THREE.InstancedBufferGeometry().copy(SVG[C.MONO].geometry);
+    ins.instanceCount = stsMono.length;
+    const mat = new THREE.MeshBasicMaterial({ 
+        color: 0x000000,
+        onBeforeCompile: shader => {
+            shader.vertexShader = document.getElementById('vertex-shader-rotate').textContent;
+        } 
+    });
+
+    const dim = getDimensions(SVG[C.MONO]);
+
+    const instPos = [];
+    const instScale = [];
+    const instRotate = [];
+    for (let i = 0; i < sts.length; i++) {
+        instPos.push(0,0,0);
+        instScale.push(0.0005, 0.0005, 0.0005);
+        instRotate.push(Math.PI/2, 0, 0);
+    }
+
+    ins.setAttribute(
+        "aScale",
+        new THREE.InstancedBufferAttribute(new Float32Array(instScale), 3, false)
+    );
+    ins.setAttribute(
+        "aPosition",
+        new THREE.InstancedBufferAttribute(new Float32Array(instPos), 3, false)
+    );
+    ins.setAttribute(
+        "rotation",
+        new THREE.InstancedBufferAttribute(new Float32Array(instRotate), 3, false)
+    );
+    
+    const instEdges = new THREE.Mesh(ins, mat);
+    scene.add(instEdges);
+}
+
 /**
  * Draws the quali st.zq in the center of the cuboid with width 0.
  * @param {THREE.Scene} scene 
@@ -109,37 +155,30 @@ export function drawCuboidQualiX(scene, st) {
     scene.add(svg);
 }
 
+//https://discourse.threejs.org/t/how-to-appoint-different-size-with-instancedbuffergeometry/27621
+
 /**
  * Loads the svg from imgs/name.svg and places it using the callback planFn.
  * @param {string} name 
  */
 function loadSVG(name) {
     const loader = new SVGLoader();
-    const group = new THREE.Group();
     const path = qualiToPath(name);
     loader.load(path, (data) => {
         // Set material for the paths
         const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
-
-        // Add each path to the group
-        data.paths.forEach((path) => {
-            const shapes = path.toShapes(true);
-            shapes.forEach((shape) => {
-                const geometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
-                const mesh = new THREE.Mesh(geometry, material);
-                group.add(mesh);
-            });
-        });
+        const shape = data.paths[0].toShapes(true)[0];
+        const geometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
+        const mesh = new THREE.Mesh(geometry, material);
 
         // resize it to a base size
-        const dim = getDimensions(group)
-        group.scale.set(1/dim.height*0.2, 1/dim.width*0.2, 0);
+        const dim = getDimensions(mesh)
+        mesh.scale.set(1/dim.height*0.2, 1/dim.width*0.2, 0);
         if (name == C.ARB) {
-            changeScale(group, 0.6, 1);
+            changeScale(mesh, 0.6, 1);
         }
+        SVG[name] = mesh;
     });
-
-    SVG[name] = group;
 };
 
 /**

@@ -11,6 +11,7 @@ function drawCuboid(scene, sts, baseGeometry, opacity) {
     for (let i = 0; i < mesh.count; i++) {
         const st = sts[i];
         dummy.position.set(st.centerX(), st.centerY(), st.centerZ());
+        dummy.scale.set(st.width(), st.height(), st.depth());
         dummy.updateMatrix();
         mesh.setMatrixAt( i, dummy.matrix );
     }
@@ -22,7 +23,7 @@ function drawCuboidEdges(scene, sts, baseGeometry) {
     if (sts.length == 0) {
         return;
     }
-    console.log(sts);
+    
     const edgesGeom = new THREE.EdgesGeometry(baseGeometry);
     const instancedGeom = new THREE.InstancedBufferGeometry().copy(edgesGeom);
     instancedGeom.instanceCount = sts.length;
@@ -85,7 +86,7 @@ export function drawScheme(scene, scheme, opacity) {
     drawCuboid(scene, dotSts, new THREE.BoxGeometry(0, 1, 0), opacity);
     drawCuboid(scene, dotStsHeight, new THREE.BoxGeometry(0, 0, 0), opacity);
 
-    //SVG.drawCuboidQualities(sts, cuboidSts);
+    SVG.drawCuboidQualities(scene, cuboidSts);
     
     return;
     const baseGeom = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1))
@@ -155,7 +156,7 @@ export function drawScheme(scene, scheme, opacity) {
         )
     instancedGeom.setAttribute(
           'aPosition',
-          new THREE.InstancedBufferAttribute(new Float32Array(posArr), 3, false))
+          new THREE.InstancedBfalseufferAttribute(new Float32Array(posArr), 3, false))
     
     scene.add(new THREE.Mesh(instancedGeom, material))
     scene.add(new THREE.Mesh(instancedGeom, materialScale))
