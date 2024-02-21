@@ -6,40 +6,33 @@ import * as typedef from "../typedefs.js";
 export function drawScheme(scene, scheme, opacity) {
     const sts = scheme.statements.filter((e) => {return e.width() != 0 && e.depth() != 0});
     console.log(sts);
-    const boxEdges = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1));
-    const instGeom = new THREE.InstancedBufferGeometry().copy(boxEdges);
+    let baseGeom = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1))
+    let instancedGeom = new THREE.InstancedBufferGeometry().copy(baseGeom)
+    instancedGeom.instanceCount = sts.length;
 
     const instPos = [];
     const instScale =[];
+    let colorArr = [];
     for (let i = 0; i < 4; i++) {
         const st = sts[i];
         instPos.push(st.centerX(), st.centerY(), st.centerZ());
         instScale.push(st.width(), st.height(), st.depth());
     }
-    instGeom.setAttribute(
+    instancedGeom.setAttribute(
         'aScale',
         new THREE.InstancedBufferAttribute(new Float32Array(instScale), 3, false));
-    instGeom.setAttribute(
+        instancedGeom.setAttribute(
         'aPosition',
         new THREE.InstancedBufferAttribute(new Float32Array(instPos), 3, false));
 
-
-    const material1 = new THREE.ShaderMaterial({
-        uniforms: {
-          color: { value: new THREE.Color(0x000000) },
-          lightDirection: { value: new THREE.Vector3(1.0, 1.0, 1.0).normalize() }
-        },
-        fragmentShader: document.getElementById('fragment-shader').textContent,
-        vertexShader: document.getElementById('vertex-shader-scale').textContent
-      })
-    var instMat = new THREE.LineBasicMaterial({
+    const instMat = new THREE.LineBasicMaterial({
         color: 0x000000, 
         onBeforeCompile: shader => {
             shader.vertexShader = document.getElementById('vertex-shader-scale').textContent;
         }
     });
     
-    var instLines = new THREE.LineSegments(instGeom, instMat);
+    var instLines = new THREE.LineSegments(instancedGeom, instMat);
     scene.add(instLines);
 
     return;
@@ -63,11 +56,11 @@ export function drawScheme(scene, scheme, opacity) {
           vertexShader: document.getElementById('vertex-shader-scale').textContent
         })
     
-    const baseGeom = new THREE.SphereGeometry(20, 32, 16)
-    const instancedGeom = new THREE.InstancedBufferGeometry().copy(baseGeom)
+    baseGeom = new THREE.SphereGeometry(20, 32, 16)
+    instancedGeom = new THREE.InstancedBufferGeometry().copy(baseGeom)
     instancedGeom.instanceCount = 10
     
-    const colorArr = []
+    colorArr = []
     const posArr = []
     for(let i = 0;i < 100;i++){
       new THREE.Color(0xFF00FF).toArray(colorArr, i*3)
