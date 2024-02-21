@@ -5,15 +5,14 @@ import * as typedef from "../typedefs.js";
 
 const SVG_BASESCALE = 0.00025;
 const SVG = {};
-for (const quali of [C.MONO, C.ANTI, C.ARB, C.CONST]) {
+for (const quali of C.QUALIS) {
     loadSVG(quali);
 }
 
 export function drawUnitZQualities(scene, sts) {
-    drawUnitZSVGs(scene, sts, C.MONO);
-    drawUnitZSVGs(scene, sts, C.ANTI);
-    drawUnitZSVGs(scene, sts, C.CONST);
-    drawUnitZSVGs(scene, sts, C.ARB);
+    for (const quali of C.QUALIS) {
+        drawUnitZSVGs(scene, sts, quali);
+    }
 }
 
 function drawUnitZSVGs(scene, sts, quali) {
@@ -30,10 +29,9 @@ function drawUnitZSVGs(scene, sts, quali) {
 }
 
 export function drawUnitXQualities(scene, sts) {
-    drawUnitXSVGs(scene, sts, C.MONO);
-    drawUnitXSVGs(scene, sts, C.ANTI);
-    drawUnitXSVGs(scene, sts, C.CONST);
-    drawUnitXSVGs(scene, sts, C.ARB);
+    for (const quali of C.QUALIS) {
+        drawUnitXSVGs(scene, sts, quali);
+    }
 }
 
 function drawUnitXSVGs(scene, sts, quali) {
@@ -58,10 +56,6 @@ export function drawCuboidQualities(scene, sts) {
         scale: (st) => Math.min(st.width(), st.depth()),
         rotate: [Math.PI/2, 0, 0]
     }
-    drawCuboidSVGs(scene, sts, C.MONO, transformX);
-    drawCuboidSVGs(scene, sts, C.ANTI, transformX);
-    drawCuboidSVGs(scene, sts, C.CONST, transformX);
-    drawCuboidSVGs(scene, sts, C.ARB, transformX);
 
     const transformZ = {
         axis: "z",
@@ -71,16 +65,15 @@ export function drawCuboidQualities(scene, sts) {
         scale: (st) => Math.min(st.width(), st.depth()),
         rotate: [Math.PI/2, 0, 0]
     }
-    drawCuboidSVGs(scene, sts, C.MONO, transformZ);
-    drawCuboidSVGs(scene, sts, C.ANTI, transformZ);
-    drawCuboidSVGs(scene, sts, C.CONST, transformZ);
-    drawCuboidSVGs(scene, sts, C.ARB, transformZ);
+    
+    for (const quali of C.QUALIS) {
+        drawCuboidSVGs(scene, sts, quali, transformX);
+        drawCuboidSVGs(scene, sts, quali, transformZ);
+    }
 }
 
 function drawCuboidSVGs(scene, sts, quali, transform) {
     sts = sts.filter((st) => st[transform.axis + "q"] == quali);
-    console.log(transform);
-    console.log(sts);
     if (sts.length == 0) {
         return;
     }
@@ -100,7 +93,6 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
     for (let i = 0; i < sts.length; i++) {
         const st = sts[i]
         const dim = getDimensions(SVG[quali]);
-        console.log(transform.posX(st, dim), transform.posY(st, dim), transform.posZ(st, dim));
         const posX = transform.posX(st, dim);
         const posY = transform.posY(st, dim);
         const posZ = transform.posZ(st, dim);
@@ -125,7 +117,6 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
     
     const instMesh = new THREE.Mesh(instancedGeom, material);
     scene.add(instMesh);
-    console.log("ADDEDDD " + sts.length);
 }
 
 //https://discourse.threejs.org/t/how-to-appoint-different-size-with-instancedbuffergeometry/27621

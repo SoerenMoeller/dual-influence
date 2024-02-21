@@ -78,6 +78,7 @@ export function drawScheme(scene, scheme, opacity) {
     drawCuboidEdges(scene, yUnitStsHeight, new THREE.BoxGeometry(1, 0, 0));
     drawCuboidEdges(scene, dotSts, new THREE.BoxGeometry(0, 1, 0));
     drawCuboidEdges(scene, dotStsHeight, new THREE.BoxGeometry(0, 0, 0));
+    
     drawCuboid(scene, cuboidSts, new THREE.BoxGeometry(1, 1, 1), opacity, "cuboidSts");
     drawCuboid(scene, xUnitSts, new THREE.BoxGeometry(0, 1, 1), opacity, "xUnitSts");
     drawCuboid(scene, yUnitSts, new THREE.BoxGeometry(1, 1, 0), opacity, "yUnitSts");

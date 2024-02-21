@@ -17,63 +17,6 @@ document.addEventListener("DOMContentLoaded", (e) => {
     main();
 });
 
-function main2() {
-    const scene = new THREE.Scene()
-    const canvas = document.getElementById("drawArea");
-    const camera = new THREE.PerspectiveCamera( 75, canvas.offsetWidth / canvas.offsetHeight , 0.1, 8000 );
-    camera.position.z = 100
-    camera.lookAt(0, 0, 0)
-    
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: canvas })
-    renderer.setSize(container.clientWidth, container.clientHeight)
-    renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setClearColor(0x000000, 0.9)
-    //container.appendChild(renderer.domElement)
-    
-    const axesHelper = new THREE.AxesHelper(1000)
-    
-    scene.add(axesHelper)
-    
-    const controls = new OrbitControls(camera, renderer.domElement)
-    
-    const instMat = new THREE.LineBasicMaterial({
-        color: new THREE.Color(0x0000ff),
-        onBeforeCompile: shader => {
-            shader.vertexShader = document.getElementById('vertex-shader-scale').textContent;
-        }
-    });
-    
-    const baseGeom = new THREE.EdgesGeometry(new THREE.BoxGeometry(20, 32, 16))
-    const instancedGeom = new THREE.InstancedBufferGeometry().copy(baseGeom)
-    instancedGeom.instanceCount = 10
-    
-    const colorArr = []
-    const posArr = []
-    const scaleArr = []
-    for(let i = 0;i < 100;i++){
-        scaleArr.push(Math.random() * 2);
-        new THREE.Color(0x000000).toArray(colorArr, i*3)
-        posArr.push(Math.random() * 400 - 200, Math.random() * 400 - 200, Math.random() * 400 - 200)
-    }
-
-    instancedGeom.setAttribute(
-          'aPosition',
-          new THREE.InstancedBufferAttribute(new Float32Array(posArr), 3, false))
-    instancedGeom.setAttribute(
-        'aScale',
-        new THREE.InstancedBufferAttribute(new Float32Array(scaleArr), 3, false))
-        
-    scene.add(new THREE.LineSegments(instancedGeom, instMat))
-    
-    animate()
-    
-    function animate(){
-      requestAnimationFrame(animate)
-      renderer.render(scene, camera)
-      controls.update()
-    }
-}
-
 async function main() {
     const interactiveCheckBox = document.getElementById("interactive-checkbox");
     const showGridCheckBox = document.getElementById("show-grid-checkbox");
