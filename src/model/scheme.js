@@ -97,6 +97,14 @@ function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
     const overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
+    if (sts.length == 0) {
+        console.log("stop");
+        debugger;
+    }
+    if (x == nextX || z == nextZ) {
+        console.log("stop");
+        debugger;
+    }
     const ys = ST.intersectY(sts);
     const qualiX = ST.qualiMin(sts, C.X_AXIS);
     const qualiZ = ST.qualiMin(sts, C.Z_AXIS);
@@ -169,7 +177,7 @@ function seperate(scheme) {
         newScheme.statements.push(upperRow, lowerRow);
     }
     const lastZ = zBounds[zBounds.length - 1];
-    const overlappingZ = zOverlapMap.get(zBounds[lastZ]);
+    const overlappingZ = zOverlapMap.get(lastZ);
     const lastRow = createUpperRow(xOverlapMap, overlappingZ, lastZ, xBounds);
     newScheme.statements.push(lastRow);
 
@@ -243,6 +251,23 @@ function buildOverlapMap(sts, name) {
 
     const sortedBounds = [...new Set(bounds)].sort((a, b) => a - b);
     extendOverlapMap(sortedBounds, map);
+
+    // verify map (just for now because I am paranoid)
+    for (const bound of sortedBounds) {
+        for (const st of map.get(bound)) {
+            if (!(bound <= st[name][1] && bound >= st[name][0])) {
+                console.log("ERROR!");
+            }
+        }
+    }
+    for (const st of sts) {
+        const relevantBounds = sortedBounds.filter((e) => e >= st[name][0] && e <= st[name][1]);
+        for (const bound of relevantBounds) {
+            if (!(map.get(bound).has(st))) {
+                console.log("ERROR!");
+            }
+        }
+    }
 
     return [sortedBounds, map];
 }

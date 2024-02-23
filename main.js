@@ -148,7 +148,7 @@ function setupScene() {
     SETTINGS.camera = new THREE.PerspectiveCamera( 60, SETTINGS.canvas.offsetWidth / SETTINGS.canvas.offsetHeight , 0.1, 1000 );
     const renderer = new THREE.WebGLRenderer({
         alpha: true,
-        antialias: false,
+        antialias: true,
         canvas: SETTINGS.canvas
     });
     renderer.setSize(SETTINGS.canvas.offsetWidth, SETTINGS.canvas.offsetHeight);
@@ -156,7 +156,6 @@ function setupScene() {
     
     // Camera controls
     SETTINGS.controls = new OrbitControls(SETTINGS.camera, renderer.domElement);
-    SETTINGS.controls.enableDamping = true;
     SETTINGS.controls.autoRotateSpeed = -2.0;
 
     function animate() {

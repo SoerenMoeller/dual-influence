@@ -1,5 +1,5 @@
 export function changeOpacity(scene, opacity) {
-    const statementTypes = ["cuboidSts", "xUnitSts", "yUnitSts"];
+    const statementTypes = ["cuboidSts", "xUnitSts", "yUnitSts", "cuboidStsHeight"];
     for (const type of statementTypes) {
         const sts = scene.getObjectByName(type);
         if (sts !== undefined) {
