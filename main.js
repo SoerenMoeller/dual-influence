@@ -145,10 +145,10 @@ async function loadSchemeFromFile() {
 function setupScene() {
     SETTINGS.scene = new THREE.Scene();
     SETTINGS.canvas = document.getElementById("drawArea");
-    SETTINGS.camera = new THREE.PerspectiveCamera( 75, SETTINGS.canvas.offsetWidth / SETTINGS.canvas.offsetHeight , 0.1, 1000 );
+    SETTINGS.camera = new THREE.PerspectiveCamera( 60, SETTINGS.canvas.offsetWidth / SETTINGS.canvas.offsetHeight , 0.1, 1000 );
     const renderer = new THREE.WebGLRenderer({
         alpha: true,
-        antialias: true,
+        antialias: false,
         canvas: SETTINGS.canvas
     });
     renderer.setSize(SETTINGS.canvas.offsetWidth, SETTINGS.canvas.offsetHeight);

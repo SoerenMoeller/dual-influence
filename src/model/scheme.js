@@ -48,137 +48,154 @@ function getBounds(rawModel, index) {
     ]
 }
 
+function createDotStatement(xOverlapMap, overlappingZ, x, z) {
+    const overlappingX = xOverlapMap.get(x);
+    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    
+    const ys = ST.intersectY(sts);
+    return ST.addFunctions({
+        x: [x, x],
+        z: [z, z],
+        y: ys,
+        xq: C.CONST,
+        zq: C.CONST
+    });
+}
+
+function createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z) {
+    const overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    const ys = ST.intersectY(sts);
+    const quali = ST.qualiMin(sts, C.X_AXIS);
+
+    return ST.addFunctions({
+        x: [x, nextX],
+        z: [z, z],
+        y: ys,
+        xq: quali,
+        zq: C.CONST
+    });
+}
+
+function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
+    const overlappingX = xOverlapMap.get(x);
+    const overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    const quali = ST.qualiMin(sts, "z");
+    
+    const ys = ST.intersectY(sts);
+    return ST.addFunctions({
+        x: [x, x],
+        z: [z, nextZ],
+        y: ys,
+        xq: C.CONST,
+        zq: quali
+    });
+}
+
+function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
+    const overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+    const overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    const ys = ST.intersectY(sts);
+    const qualiX = ST.qualiMin(sts, C.X_AXIS);
+    const qualiZ = ST.qualiMin(sts, C.Z_AXIS);
+
+    return ST.addFunctions({
+        x: [x, nextX],
+        z: [z, nextZ],
+        y: ys,
+        xq: qualiX,
+        zq: qualiZ
+    });
+}
+
+function createUpperRow(xOverlapMap, overlappingZ, z, xBounds) {
+    const row = [];
+    for (let j = 0; j < xBounds.length - 1; j++) {
+        const x = xBounds[j];
+        const nextX = xBounds[j + 1];
+        
+        const dotStatement = createDotStatement(xOverlapMap, overlappingZ, x, z);
+        const unitZStatement = createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z);
+        row.push(dotStatement, unitZStatement);
+    }
+
+    const lastX = xBounds[xBounds.length - 1];
+    const finalDotStatement = createDotStatement(xOverlapMap, overlappingZ, lastX, z);
+    row.push(finalDotStatement);
+
+    return row;
+}
+
+function createLowerRow(xOverlapMap, zOverlapMap, z, nextZ, xBounds) {
+    const row = [];
+    for (let j = 0; j < xBounds.length - 1; j++) {
+        const x = xBounds[j];
+        const nextX = xBounds[j + 1];
+        
+        const unitXStatement = createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ);
+        const statement = createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ);
+        row.push(unitXStatement, statement);
+    }
+
+    const lastX = xBounds[xBounds.length - 1];
+    const finalUnitXStatement = createUnitXStatement(xOverlapMap, zOverlapMap, lastX, z, nextZ);
+    row.push(finalUnitXStatement);
+
+    return row;
+}
+
+/**
+ * Seperates a scheme, meaning no statements overlap.
+ * @param {typedef.Scheme} scheme Scheme to seperate. 
+ * @returns 
+ */
+function seperate(scheme) {
+    const sts = scheme.statements;
+    const [xBounds, xOverlapMap] = buildOverlapMap(sts, C.X_AXIS);
+    const [zBounds, zOverlapMap] = buildOverlapMap(sts, C.Z_AXIS);
+
+    const newScheme = {...scheme};
+    newScheme.statements = [];
+    for (let i = 0; i < zBounds.length - 1; i++) {
+        const z = zBounds[i];
+        const nextZ = zBounds[i + 1];
+        const overlappingZ = zOverlapMap.get(z);
+
+        const upperRow = createUpperRow(xOverlapMap, overlappingZ, z, xBounds);
+        const lowerRow = createLowerRow(xOverlapMap, zOverlapMap, z, nextZ, xBounds);
+
+        newScheme.statements.push(upperRow, lowerRow);
+    }
+    const lastZ = zBounds[zBounds.length - 1];
+    const overlappingZ = zOverlapMap.get(zBounds[lastZ]);
+    const lastRow = createUpperRow(xOverlapMap, overlappingZ, lastZ, xBounds);
+    newScheme.statements.push(lastRow);
+
+    return newScheme;
+}
+
+/**
+ * Normalizes a scheme and plots it.
+ * @param {typedef.Scheme} scheme Scheme to normalize
+ */
 export function normalize(scheme) {
     if (scheme.statements.length > 0 && Array.isArray(scheme.statements[0])) {
         return; // already normalized
     }
 
-    let sts = scheme.statements;
-    const xBounds = getSortedBounds(sts, "x");
-    const zBounds = getSortedBounds(sts, "z");
-    const xOverlapMap = buildOverlapMap(sts, "x");
-    const zOverlapMap = buildOverlapMap(sts, "z");
-    extendOverlapMap(xBounds, xOverlapMap, "x");
-    extendOverlapMap(zBounds, zOverlapMap, "z");
-
-    const newScheme = {...scheme};
-    newScheme.statements = [];
-    for (const i of JS.range(0, zBounds.length - 1)) {
-        const z = zBounds[i];
-        const nextZ = zBounds[i + 1];
-        const overlappingZ = zOverlapMap.get(z);
-
-        let row = [];
-        for (const j of JS.range(0, xBounds.length - 1)) {
-            const x = xBounds[j];
-            const nextX = xBounds[j + 1];
-            
-            // create dot statement
-            let overlappingX = xOverlapMap.get(x);
-            sts = JS.intersectSet(overlappingX, overlappingZ);
-            
-            let ys = ST.intersectY(sts);
-            let newSt = ST.addFunctions({
-                x: [x, x],
-                z: [z, z],
-                y: ys,
-                xq: C.CONST,
-                zq: C.CONST
-            });
-            row.push(newSt);
-
-            overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
-            sts = JS.intersectSet(overlappingX, overlappingZ);
-            ys = ST.intersectY(sts);
-            const quali = ST.qualiMin(sts, "x");
-
-            newSt = ST.addFunctions({
-                x: [x, nextX],
-                z: [z, z],
-                y: ys,
-                xq: quali,
-                zq: C.CONST
-            });
-            row.push(newSt);
-
-            if (j == xBounds.length - 2) {
-                let overlappingX = xOverlapMap.get(nextX);
-                sts = JS.intersectSet(overlappingX, overlappingZ);
-                
-                let ys = ST.intersectY(sts);
-                let newSt = ST.addFunctions({
-                    x: [x, x],
-                    z: [z, z],
-                    y: ys,
-                    xq: C.CONST,
-                    zq: C.CONST
-                });
-                row.push(newSt);
-            }
-        }
-        newScheme.statements.push(row);
-
-        row = [];
-        for (const j of JS.range(0, xBounds.length - 1)) {
-            const x = xBounds[j];
-            const nextX = xBounds[j + 1];
-            
-            // create unitX statement
-            let overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
-            let overlappingX = xOverlapMap.get(x);
-            let qualiZ = ST.qualiMin(sts, "z");
-            sts = JS.intersectSet(overlappingX, overlappingZ);
-            
-            let ys = ST.intersectY(sts);
-            let newSt = ST.addFunctions({
-                x: [x, x],
-                z: [z, nextZ],
-                y: ys,
-                xq: C.CONST,
-                zq: qualiZ
-            });
-            row.push(newSt);
-
-            overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
-            overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
-            sts = JS.intersectSet(overlappingX, overlappingZ);
-            ys = ST.intersectY(sts);
-            qualiZ = ST.qualiMin(sts, "z");
-            const qualiX = ST.qualiMin(sts, "x")
-
-            newSt = ST.addFunctions({
-                x: [x, nextX],
-                z: [z, nextZ],
-                y: ys,
-                xq: qualiX,
-                zq: qualiZ
-            });
-            row.push(newSt);
-
-            if (j == xBounds.length - 2) {
-                overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
-                overlappingX = xOverlapMap.get(x);
-                qualiZ = ST.qualiMin(sts, "z");
-                sts = JS.intersectSet(overlappingX, overlappingZ);
-                
-                ys = ST.intersectY(sts);
-                newSt = ST.addFunctions({
-                    x: [x, x],
-                    z: [z, nextZ],
-                    y: ys,
-                    xq: C.CONST,
-                    zq: qualiZ
-                });
-                row.push(newSt);
-            }
-        }
-        newScheme.statements.push(row);
-    }
-
+    const newScheme = seperate(scheme);
     MAIN.loadScheme(newScheme);
 }
 
-function extendOverlapMap(bounds, overlapMap, name) {
+/**
+ * Expects a map where each bound points to the statements where it is a bound.
+ * Adds these statements to all intermediate points (between start and end). 
+ * @param {number[]} bounds 
+ * @param {Map<number, Set<typedef.Statement>>} overlapMap 
+ */
+function extendOverlapMap(bounds, overlapMap) {
     const cache = new Set(); 
     for (const bound of bounds) {
         for (const st of overlapMap.get(bound)) {
@@ -195,12 +212,22 @@ function extendOverlapMap(bounds, overlapMap, name) {
     }
 }
 
+/**
+ * Extracts all bounds of a scheme and which points are overlapped by 
+ * which statements.
+ * @param {typedef.Statement[]} sts Statetement to consider.
+ * @param {String} name Name of the axis
+ * @returns {Array} The sorted bounds and the map from points to sets of 
+ * statements
+ */
 function buildOverlapMap(sts, name) {
     const map = new Map();
+    const bounds = []
 
     for (const st of sts) {
         const lower = st[name][0];
         const upper = st[name][1];
+        bounds.push(lower, upper);
 
         if (map.has(lower)) {
             map.set(lower, map.get(lower).add(st));
@@ -214,10 +241,8 @@ function buildOverlapMap(sts, name) {
         }
     }
 
-    return map;
-}
+    const sortedBounds = [...new Set(bounds)].sort((a, b) => a - b);
+    extendOverlapMap(sortedBounds, map);
 
-function getSortedBounds(sts, name) {
-    const bounds = sts.map(e => e[name][0]).concat(sts.map(e => e[name][1]));
-    return [...new Set(bounds)].sort((a, b) => a - b);
+    return [sortedBounds, map];
 }

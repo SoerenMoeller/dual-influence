@@ -3,18 +3,46 @@ import * as THREE from "three";
 import * as C from "../constants.js";
 import * as typedef from "../typedefs.js";
 
+/**
+ * Loads all svgs from imgs/ and visualizes the qualities of given statements.
+ * For performance reasons, the are clustered instead of drawing all individually.
+ * 
+ * This needs custom shaders, this helped me to get it going:
+ * //https://discourse.threejs.org/t/how-to-appoint-different-size-with-instancedbuffergeometry/27621
+ */
+
 const SVG_BASESCALE = 0.00025;
 const SVG = {};
-for (const quali of C.QUALIS) {
-    loadSVG(quali);
+loadAllSVGs();
+
+/**
+ * Loads all SVGs from imgs/.
+ */
+function loadAllSVGs() {
+    for (const quali of C.QUALIS) {
+        loadSVG(quali);
+    }
 }
 
+/**
+ * Draws the x-quality of all statements in sts. Sts is supposed to only include
+ * statements with a unit-interval on the z-axis.
+ * @param {THREE.Scene} scene Scene to draw in.
+ * @param {typedef.Statement[]} sts Statements to draw the qualities of.
+ */
 export function drawUnitZQualities(scene, sts) {
     for (const quali of C.QUALIS) {
         drawUnitZSVGs(scene, sts, quali);
     }
 }
 
+/**
+ * Draws the x-quality `quali` of all statements in sts. Sts is supposed to 
+ * only include statements with a unit-interval on the z-axis.
+ * @param {THREE.Scene} scene Scene to draw in.
+ * @param {typedef.Statement[]} sts Statements to draw the qualities of.
+ * @param {String} quali Quality to draw.
+ */
 function drawUnitZSVGs(scene, sts, quali) {
     const transform = {
         axis: "x",
@@ -28,12 +56,25 @@ function drawUnitZSVGs(scene, sts, quali) {
     drawCuboidSVGs(scene, sts, quali, transform);
 }
 
+/**
+ * Draws the z-quality of all statements in sts. Sts is supposed to only include
+ * statements with a unit-interval on the x-axis.
+ * @param {THREE.Scene} scene Scene to draw in.
+ * @param {typedef.Statement[]} sts Statements to draw the qualities of.
+ */
 export function drawUnitXQualities(scene, sts) {
     for (const quali of C.QUALIS) {
         drawUnitXSVGs(scene, sts, quali);
     }
 }
 
+/**
+ * Draws the z-quality `quali` of all statements in sts. Sts is supposed to 
+ * only include statements with a unit-interval on the x-axis.
+ * @param {THREE.Scene} scene Scene to draw in.
+ * @param {typedef.Statement[]} sts Statements to draw the qualities of.
+ * @param {String} quali Quality to draw.
+ */
 function drawUnitXSVGs(scene, sts, quali) {
     const transform = {
         axis: "z",
@@ -47,6 +88,12 @@ function drawUnitXSVGs(scene, sts, quali) {
     drawCuboidSVGs(scene, sts, quali, transform);
 }
 
+/**
+ * Draws both qualities of all statements in sts. Sts it expected to only 
+ * include statements where the x- and z-axis are non-unit intervals.
+ * @param {THREE.Scene} scene Scene to draw in. 
+ * @param {*} sts Statements to draw the qualities of.
+ */
 export function drawCuboidQualities(scene, sts) {
     const transformX = {
         axis: "x",
@@ -72,6 +119,15 @@ export function drawCuboidQualities(scene, sts) {
     }
 }
 
+/**
+ * Draws a qualitiy `quali` into the scene. Additional drawing informations 
+ * are included in `transform`. 
+ * @param {THREE.Scene} scene 
+ * @param {typedef.Statement[]} sts 
+ * @param {String} quali 
+ * @param {Object} transform 
+ * @returns 
+ */
 function drawCuboidSVGs(scene, sts, quali, transform) {
     sts = sts.filter((st) => st[transform.axis + "q"] == quali);
     if (sts.length == 0) {
@@ -119,10 +175,8 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
     scene.add(instMesh);
 }
 
-//https://discourse.threejs.org/t/how-to-appoint-different-size-with-instancedbuffergeometry/27621
-
 /**
- * Loads the svg from imgs/name.svg and places it using the callback planFn.
+ * Loads the svg from imgs/name.svg and saves the Mesh in the SVG object.
  * @param {string} name 
  */
 function loadSVG(name) {
@@ -136,8 +190,7 @@ function loadSVG(name) {
         const mesh = new THREE.Mesh(geometry, material);
 
         // resize it to a base size
-        const dim = getDimensions(mesh)
-        mesh.scale.set(1/dim.height*0.2, 1/dim.width*0.2, 0);
+        mesh.scale.set(SVG_BASESCALE, SVG_BASESCALE, 0);
         if (name == C.ARB) {
             changeScale(mesh, 0.6, 1);
         }
