@@ -43,6 +43,13 @@
                     </label>
                 </div>
                 <div class="flex-space-between">
+                    <div>Show Behaviors</div>
+                    <label class="switch">
+                        <input type="checkbox" id="show-behavior-checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="flex-space-between">
                     <div>Grid Size</div>
                     <input type="number" id="grid-size" name="grid-size" min="1" max="5" value="1">
                 </div>
@@ -65,24 +72,6 @@
         </div>
     </div>
 	</body>
-
-    <script type="x-shader/x-vertex" id="vertex-shader">
-        attribute vec3 aPosition;
-        attribute vec3 aColor;
-  
-        varying vec3 vColor;
-  
-        varying vec3 vNormal;
-        void main(){
-          vColor = aColor;
-  
-          vNormal = normal;
-  
-          vec3 transformed = position.xyz;
-          transformed += aPosition;
-          gl_Position = projectionMatrix* modelViewMatrix * vec4(transformed, 1.);
-        }
-  </script>
   <script type="x-shader/x-vertex" id="vertex-shader-scale">
         attribute vec3 aPosition;
         attribute vec3 aColor;

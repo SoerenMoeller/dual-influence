@@ -10,7 +10,8 @@ const SETTINGS = {
     gridSize: 1,
     example: "example2",
     interactiveMode: false,
-    opacity: 0.3
+    opacity: 0.3,
+    showBehavior: true
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 async function main() {
     const interactiveCheckBox = document.getElementById("interactive-checkbox");
     const showGridCheckBox = document.getElementById("show-grid-checkbox");
+    const showBehaviorCheckBox = document.getElementById("show-behavior-checkbox");
     const gridSizeNumberField = document.getElementById("grid-size");
     const exampleSelect = document.getElementById("example-picker");
     const normalizeButton = document.getElementById("normalize-button");
@@ -30,6 +32,7 @@ async function main() {
     // default values
     interactiveCheckBox.checked = SETTINGS.interactiveMode;
     showGridCheckBox.checked = SETTINGS.showGrid;
+    showBehaviorCheckBox.checked = SETTINGS.showBehavior;
     gridSizeNumberField.value = SETTINGS.gridSize;
     exampleSelect.value = SETTINGS.example;
     stOpacityPicker.value = SETTINGS.opacity;
@@ -54,6 +57,15 @@ async function main() {
         if (SETTINGS.showGrid) {
             CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
         } 
+    });
+    showBehaviorCheckBox.addEventListener("change", (e) => {
+        SETTINGS.showBehavior = showBehaviorCheckBox.checked;
+
+        if (SETTINGS.showBehavior) {
+            CUBOID.drawBehaviors(SETTINGS.scene, SETTINGS.scheme);
+        } else {
+            RESET.resetBehaviors(SETTINGS.scene);
+        }
     });
     exampleSelect.addEventListener("change", (e) => loadSchemeFromFile());
     stOpacityPicker.addEventListener("change", (e) => {

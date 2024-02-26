@@ -84,6 +84,15 @@ export function drawScheme(scene, scheme, opacity) {
     drawCuboid(scene, yUnitSts, new THREE.BoxGeometry(1, 1, 0), opacity, "yUnitSts");
     drawCuboid(scene, cuboidStsHeight, new THREE.BoxGeometry(1, 0, 1), opacity, "cuboidStsHeight");
 
+    drawBehaviors(scene, scheme);
+}
+
+export function drawBehaviors(scene, scheme) {
+    const sts = scheme.statements.flat();
+    const cuboidSts = sts.filter((e) => {return e.width() != 0 && e.depth() != 0 && e.height() != 0});
+    const xUnitSts = sts.filter((e) => {return e.width() == 0 && e.depth() != 0 && e.height() != 0});
+    const yUnitSts = sts.filter((e) => {return e.width() != 0 && e.depth() == 0 && e.height() != 0});
+
     SVG.drawCuboidQualities(scene, cuboidSts);
     SVG.drawUnitXQualities(scene, xUnitSts);
     SVG.drawUnitZQualities(scene, yUnitSts);

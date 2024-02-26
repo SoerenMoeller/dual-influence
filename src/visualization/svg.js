@@ -172,6 +172,7 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
     );
     
     const instMesh = new THREE.Mesh(instancedGeom, material);
+    instMesh.name = "behavior";
     scene.add(instMesh);
 }
 

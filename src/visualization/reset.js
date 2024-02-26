@@ -18,3 +18,11 @@ export function resetGrid(scene) {
         scene.remove(grid);
     }
 }
+
+export function resetBehaviors(scene) {
+    let svg = scene.getObjectByName("behavior");
+    while (svg !== undefined) {
+        scene.remove(svg);
+        svg = scene.getObjectByName("behavior");
+    }
+}
