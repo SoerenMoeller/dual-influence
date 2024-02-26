@@ -34,17 +34,14 @@ export const addFunctions = (st) => ({
     centerZ() {
         return this.z[0] + this.depth() / 2;
     },
-    name() {
-        return `<[${this.x}]|[${this.z}]|${this.xq}|${this.zq}|[${this.y}]>`;
+    hasSingletonLTR() {
+        return this.x[0] == this.x[1];
     },
-    nameC() {
-        return `${this.name()}C`;
+    hasSingletonFTB() {
+        return this.z[0] == this.z[1];
     },
-    nameXQ() {
-        return `${this.name()}xq`;
-    },
-    nameZQ() {
-        return `${this.name()}zq`;
+    hasNoSingleton() {
+        return !this.hasSingletonFTB() && !this.hasSingletonLTR();
     }
 });
 

@@ -57,7 +57,7 @@ function drawCuboidEdges(scene, sts, baseGeometry) {
     scene.add(instEdges);
 }
 
-export function drawScheme(scene, scheme, opacity) {
+export function drawScheme(scene, scheme, opacity, behaviors) {
     // I rescale a box with width=height=depth=1. Since unit intervals exist,
     // I have to make a distinction if an axis is a unit interval.
     const sts = scheme.statements.flat();
@@ -84,7 +84,9 @@ export function drawScheme(scene, scheme, opacity) {
     drawCuboid(scene, yUnitSts, new THREE.BoxGeometry(1, 1, 0), opacity, "yUnitSts");
     drawCuboid(scene, cuboidStsHeight, new THREE.BoxGeometry(1, 0, 1), opacity, "cuboidStsHeight");
 
-    drawBehaviors(scene, scheme);
+    if (behaviors) {
+        drawBehaviors(scene, scheme);
+    }
 }
 
 export function drawBehaviors(scene, scheme) {

@@ -11,7 +11,7 @@ const SETTINGS = {
     example: "example2",
     interactiveMode: false,
     opacity: 0.3,
-    showBehavior: true
+    showBehavior: false
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
@@ -135,7 +135,7 @@ export function loadScheme(scheme) {
     if (SETTINGS.showGrid) {
         CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
     } 
-    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
+    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity, SETTINGS.showBehavior);
     SETTINGS.scene.traverse( function( object ) {
         object.frustumCulled = false;
     } );

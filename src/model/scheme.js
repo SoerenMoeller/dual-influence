@@ -1,4 +1,5 @@
-import * as ST from "./statement.js"
+import * as RULES from "./rules.js";
+import * as ST from "./statement.js";
 import * as typedef from "../typedefs.js";
 import * as MAIN from "../../main.js";
 import * as JS from "../js-helper.js";
@@ -97,14 +98,6 @@ function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
     const overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
-    if (sts.length == 0) {
-        console.log("stop");
-        debugger;
-    }
-    if (x == nextX || z == nextZ) {
-        console.log("stop");
-        debugger;
-    }
     const ys = ST.intersectY(sts);
     const qualiX = ST.qualiMin(sts, C.X_AXIS);
     const qualiZ = ST.qualiMin(sts, C.Z_AXIS);
@@ -154,6 +147,20 @@ function createLowerRow(xOverlapMap, zOverlapMap, z, nextZ, xBounds) {
     return row;
 }
 
+function createIndexMap(scheme) {
+    const indexMap = new Map();
+    const sts = scheme.statements;
+    for (let i = 0; i < sts.length; i++) {
+        const row = sts[i];
+        for (let j = 0; j < row.length; j++) {
+            const st = row[j];
+            indexMap.set(st, [i, j]);
+        }
+    }
+
+    return indexMap;
+}
+
 /**
  * Seperates a scheme, meaning no statements overlap.
  * @param {typedef.Scheme} scheme Scheme to seperate. 
@@ -184,6 +191,29 @@ function seperate(scheme) {
     return newScheme;
 }
 
+function prune(scheme) {
+    const indexMap = createIndexMap(scheme);
+    const sts = scheme.statements;
+    const stsFlat = sts.flat().filter((st) => st.width() != 0 || st.depth() != 0);
+    const queue = new Set(stsFlat);
+
+    while (queue.size != 0) {
+        const st = queue.values().next().value;
+
+        const [i, j] = indexMap.get(st);
+
+        if (st.hasNoSingleton()) {
+            console.log(RULES.left(st, sts[i-1]))
+        } else if (st.hasSingletonLTR()) {
+
+        } else if (st.hasSingletonFTB()) {
+
+        }
+
+        queue.delete(st);
+    }
+}
+
 /**
  * Normalizes a scheme and plots it.
  * @param {typedef.Scheme} scheme Scheme to normalize
@@ -194,6 +224,7 @@ export function normalize(scheme) {
     }
 
     const newScheme = seperate(scheme);
+    prune(newScheme);
     MAIN.loadScheme(newScheme);
 }
 
