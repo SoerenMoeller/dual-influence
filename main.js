@@ -11,7 +11,7 @@ const SETTINGS = {
     example: "example2",
     interactiveMode: false,
     opacity: 0.3,
-    showBehavior: false
+    threshold: 30
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 async function main() {
     const interactiveCheckBox = document.getElementById("interactive-checkbox");
     const showGridCheckBox = document.getElementById("show-grid-checkbox");
-    const showBehaviorCheckBox = document.getElementById("show-behavior-checkbox");
+    const behaviorThresholdField = document.getElementById("behavior-threshold");
     const gridSizeNumberField = document.getElementById("grid-size");
     const exampleSelect = document.getElementById("example-picker");
     const normalizeButton = document.getElementById("normalize-button");
@@ -32,7 +32,7 @@ async function main() {
     // default values
     interactiveCheckBox.checked = SETTINGS.interactiveMode;
     showGridCheckBox.checked = SETTINGS.showGrid;
-    showBehaviorCheckBox.checked = SETTINGS.showBehavior;
+    behaviorThresholdField.value = SETTINGS.threshold;
     gridSizeNumberField.value = SETTINGS.gridSize;
     exampleSelect.value = SETTINGS.example;
     stOpacityPicker.value = SETTINGS.opacity;
@@ -58,14 +58,8 @@ async function main() {
             CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
         } 
     });
-    showBehaviorCheckBox.addEventListener("change", (e) => {
-        SETTINGS.showBehavior = showBehaviorCheckBox.checked;
-
-        if (SETTINGS.showBehavior) {
-            CUBOID.drawBehaviors(SETTINGS.scene, SETTINGS.scheme);
-        } else {
-            RESET.resetBehaviors(SETTINGS.scene);
-        }
+    behaviorThresholdField.addEventListener("change", (e) => {
+        SETTINGS.threshold = behaviorThresholdField.value;
     });
     exampleSelect.addEventListener("change", (e) => loadSchemeFromFile());
     stOpacityPicker.addEventListener("change", (e) => {
@@ -135,7 +129,7 @@ export function loadScheme(scheme) {
     if (SETTINGS.showGrid) {
         CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
     } 
-    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity, SETTINGS.showBehavior);
+    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
     SETTINGS.scene.traverse( function( object ) {
         object.frustumCulled = false;
     } );
@@ -152,6 +146,19 @@ async function loadSchemeFromFile() {
 
     const scheme = await SCHEME.setup(path);
     loadScheme(scheme)
+}
+
+function checkVisibilty() {
+    if (!Object.hasOwn(SETTINGS, "scheme")) {
+        return;
+    }
+
+    const pos = SETTINGS.camera.position;
+    const sts = SETTINGS.scheme.statements.flat();
+    RESET.resetBehaviors(SETTINGS.scene);
+
+    const closeSts = sts.filter((st) => pos.distanceTo(new THREE.Vector3(st.centerX(), st.centerY(), st.centerZ())) <= SETTINGS.threshold);
+    CUBOID.drawBehaviors(SETTINGS.scene, closeSts);
 }
 
 function setupScene() {
@@ -173,6 +180,7 @@ function setupScene() {
     function animate() {
         requestAnimationFrame( animate );
         SETTINGS.controls.update();
+        checkVisibilty();
         renderer.render( SETTINGS.scene, SETTINGS.camera );
     }
     animate();
