@@ -33,15 +33,6 @@ export const addFunctions = (st) => ({
     },
     centerZ() {
         return this.z[0] + this.depth() / 2;
-    },
-    hasSingletonLTR() {
-        return this.x[0] == this.x[1];
-    },
-    hasSingletonFTB() {
-        return this.z[0] == this.z[1];
-    },
-    hasNoSingleton() {
-        return !this.hasSingletonFTB() && !this.hasSingletonLTR();
     }
 });
 

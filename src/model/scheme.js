@@ -194,20 +194,41 @@ function seperate(scheme) {
 function prune(scheme) {
     const indexMap = createIndexMap(scheme);
     const sts = scheme.statements;
-    const stsFlat = sts.flat().filter((st) => st.width() != 0 || st.depth() != 0);
-    const queue = new Set(stsFlat);
+    const queue = new Set(sts.flat());
+    const n = scheme.statements[0].length;
+    const m = scheme.statements.length;
 
     while (queue.size != 0) {
         const st = queue.values().next().value;
 
         const [i, j] = indexMap.get(st);
-
-        if (st.hasNoSingleton()) {
-            console.log(RULES.left(st, sts[i-1]))
-        } else if (st.hasSingletonLTR()) {
-
-        } else if (st.hasSingletonFTB()) {
-
+        if (i+1 < m) {
+            const rightNeighbor = sts[i+1][j]
+            const result = RULES.left(st, rightNeighbor);
+            if (result) {
+                queue.add(rightNeighbor);
+            }
+        }
+        if (i-1 >= 0) {
+            const leftNeighbor = sts[i-1][j]
+            const result = RULES.right(leftNeighbor, st);
+            if (result) {
+                queue.add(leftNeighbor);
+            }
+        }
+        if (j-1 >= 0) {
+            const frontNeighbor = sts[i][j-1]
+            const result = RULES.back(frontNeighbor, st);
+            if (result) {
+                queue.add(frontNeighbor);
+            }
+        }
+        if (j+1 < n) {
+            const backNeighbor = sts[i][j+1]
+            const result = RULES.front(st, backNeighbor);
+            if (result) {
+                queue.add(backNeighbor);
+            }
         }
 
         queue.delete(st);
