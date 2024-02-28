@@ -33,6 +33,21 @@ export const addFunctions = (st) => ({
     },
     centerZ() {
         return this.z[0] + this.depth() / 2;
+    },
+    singletonFTB() {
+        return this.z[0] == this.z[1];
+    },
+    singletonLTR() {
+        return this.x[0] == this.x[1];
+    },
+    trueSingletonFTB() {
+        return this.singletonFTB() && !this.singletonLTR();
+    },
+    trueSingletonLTR() {
+        return this.singletonLTR() && !this.singletonFTB();
+    },
+    singleton() {
+        return this.singletonFTB() && this.singletonLTR();
     }
 });
 

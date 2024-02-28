@@ -1,4 +1,5 @@
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import * as CONNECTOR from "./src/model/connector.js";
 import * as THREE from "three";
 import * as CS from "./src/visualization/coordinate-system.js";
 import * as CUBOID from "./src/visualization/cuboid.js";
@@ -70,7 +71,7 @@ async function main() {
         SCHEME.normalize(SETTINGS.scheme);
     });
     connectorButton.addEventListener("click", (e) => {
-
+        CONNECTOR.build(SETTINGS.scheme);
     });
     document.addEventListener("mousemove", (e) => {
         var vec = new THREE.Vector3(); // create once and reuse

@@ -17,6 +17,7 @@ export async function setup(path) {
             x: rawModel.x,
             y: rawModel.y, 
             z: rawModel.z,
+            normalized: false,
             statements: [...new Set(rawModel.statements.map(ST.create))],
             bounds: {
                 x: getBounds(rawModel, 0),
@@ -187,6 +188,7 @@ function seperate(scheme) {
     const overlappingZ = zOverlapMap.get(lastZ);
     const lastRow = createUpperRow(xOverlapMap, overlappingZ, lastZ, xBounds);
     newScheme.statements.push(lastRow);
+    newScheme.statements = newScheme.statements.reverse() // as in paper, largest first
 
     return newScheme;
 }
@@ -240,12 +242,13 @@ function prune(scheme) {
  * @param {typedef.Scheme} scheme Scheme to normalize
  */
 export function normalize(scheme) {
-    if (scheme.statements.length > 0 && Array.isArray(scheme.statements[0])) {
+    if (scheme.normalized) {
         return; // already normalized
     }
 
     const newScheme = seperate(scheme);
     prune(newScheme);
+    newScheme.normalized = true;
     MAIN.loadScheme(newScheme);
 }
 
