@@ -96,6 +96,9 @@ function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
 }
 
 function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
+    if (x == -16 && nextX == -12 && z == -4 && nextZ == 0) {
+        debugger;
+    }
     const overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);

@@ -34,6 +34,9 @@ export const addFunctions = (st) => ({
     centerZ() {
         return this.z[0] + this.depth() / 2;
     },
+    nonSingleton() {
+        return this.z[0] != this.z[1] && this.x[0] != this.x[1];
+    },
     singletonFTB() {
         return this.z[0] == this.z[1];
     },
@@ -113,6 +116,7 @@ export function intersectY(sts) {
         sts[0].y);
 
     if (iv === undefined) {
+        debugger;
         throw new Error("Range not overlapping.")
     }
 

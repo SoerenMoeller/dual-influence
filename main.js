@@ -12,7 +12,7 @@ const SETTINGS = {
     example: "example2",
     interactiveMode: false,
     opacity: 0.3,
-    threshold: 30
+    threshold: 70
 }
 
 document.addEventListener("DOMContentLoaded", (e) => {
@@ -71,7 +71,8 @@ async function main() {
         SCHEME.normalize(SETTINGS.scheme);
     });
     connectorButton.addEventListener("click", (e) => {
-        CONNECTOR.build(SETTINGS.scheme);
+        SCHEME.normalize(SETTINGS.scheme);
+        CONNECTOR.build(SETTINGS.scheme, SETTINGS.scene);
     });
     document.addEventListener("mousemove", (e) => {
         var vec = new THREE.Vector3(); // create once and reuse
@@ -95,7 +96,14 @@ async function main() {
 
     // load default
     setupScene();
-    loadSchemeFromFile();
+    await loadSchemeFromFile();
+
+
+    const dotGeometry = new THREE.BufferGeometry();
+    dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,1]), 3));
+    const dotMaterial = new THREE.PointsMaterial({ size: 1, color: 0xff0000 });
+    const dot = new THREE.Points(dotGeometry, dotMaterial);
+    SETTINGS.scene.add(dot);
 }
 
 function changeCameraMode() {
@@ -109,7 +117,7 @@ function changeCameraMode() {
         // this could be improved by determining the camera distance to the
         // center of the coordinate system using its fov.
         let x = 0;
-        let y = 2 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
+        let y = 10 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
         let z = SETTINGS.scheme.bounds.z[1] - SETTINGS.scheme.bounds.z[0];
         SETTINGS.camera.position.set(x, y, z);
 

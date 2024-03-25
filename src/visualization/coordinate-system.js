@@ -42,7 +42,7 @@ function createAxes(model) {
     const axes = [
         {dir: new THREE.Vector3(1, 0, 0), name: "x"},
         {dir: new THREE.Vector3(0, 1, 0), name: "y"},
-        {dir: new THREE.Vector3(0, 0, 1), name: "z"}
+        {dir: new THREE.Vector3(0, 0, -1), name: "z"}
     ];
 
     // extract bounds
