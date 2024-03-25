@@ -82,7 +82,7 @@ function drawUnitXSVGs(scene, sts, quali) {
         posY: (st, dim) => st.y[0] + st.height()/2,
         posZ: (st, dim) => -st.centerZ(),
         scale: (st) => Math.min(st.height(), st.depth()),
-        rotate: [0, Math.PI/2, 0]
+        rotate: [Math.PI, Math.PI/2, 0]
     }
 
     drawCuboidSVGs(scene, sts, quali, transform);

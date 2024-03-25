@@ -17,13 +17,13 @@ export function draw(scene, scheme, cornerFn) {
             continue;
         }
 
-        corners.push(st.x[0], leftFront, st.z[0]);
-        corners.push(st.x[1], rightFront, st.z[0]);
-        corners.push(st.x[0], leftBack, st.z[1]);
+        corners.push(st.x[0], leftFront, -st.z[0]);
+        corners.push(st.x[1], rightFront, -st.z[0]);
+        corners.push(st.x[0], leftBack, -st.z[1]);
 
-        corners.push(st.x[1], rightFront, st.z[0]);
-        corners.push(st.x[1], rightBack, st.z[1]);
-        corners.push(st.x[0], leftBack, st.z[1]);
+        corners.push(st.x[1], rightFront, -st.z[0]);
+        corners.push(st.x[1], rightBack, -st.z[1]);
+        corners.push(st.x[0], leftBack, -st.z[1]);
     }
     console.log(corners);
     const vertices = new Float32Array(corners);
