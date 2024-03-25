@@ -48,9 +48,9 @@ function drawUnitZSVGs(scene, sts, quali) {
         axis: "x",
         posX: (st, dim) => st.centerX() - dim.width/2,
         posY: (st, dim) => st.y[0] + st.height()/2,
-        posZ: (st, dim) => st.z[1] + dim.box.min.z/2,
+        posZ: (st, dim) => -st.z[0],
         scale: (st) => Math.min(st.width(), st.height()),
-        rotate: [0, 0, 0]
+        rotate: [0, 0, Math.PI/2]
     }
 
     drawCuboidSVGs(scene, sts, quali, transform);
@@ -80,7 +80,7 @@ function drawUnitXSVGs(scene, sts, quali) {
         axis: "z",
         posX: (st, dim) => st.x[0] + dim.box.min.x/2,
         posY: (st, dim) => st.y[0] + st.height()/2,
-        posZ: (st, dim) => st.centerZ() + dim.depth/2,
+        posZ: (st, dim) => -st.centerZ(),
         scale: (st) => Math.min(st.height(), st.depth()),
         rotate: [0, Math.PI/2, 0]
     }
@@ -99,7 +99,7 @@ export function drawCuboidQualities(scene, sts) {
         axis: "x",
         posX: (st, dim) => st.centerX() - dim.width/2,
         posY: (st, dim) => st.y[0],
-        posZ: (st, dim) => st.z[1] + dim.box.min.z/2,
+        posZ: (st, dim) => -st.z[0],
         scale: (st) => Math.min(st.width(), st.depth()),
         rotate: [Math.PI/2, 0, 0]
     }
@@ -108,7 +108,7 @@ export function drawCuboidQualities(scene, sts) {
         axis: "z",
         posX: (st, dim) => st.x[0] + dim.box.min.x/2,
         posY: (st, dim) => st.y[0],
-        posZ: (st, dim) => st.centerZ() + dim.depth/2,
+        posZ: (st, dim) => -(st.centerZ() + dim.depth/2),
         scale: (st) => Math.min(st.width(), st.depth()),
         rotate: [Math.PI/2, 0, 0]
     }
@@ -148,6 +148,9 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
     const instRotate = [];
     for (let i = 0; i < sts.length; i++) {
         const st = sts[i]
+        if (st.x[0] == -16 && st.x[1] == -12 && st.z[0] == -4 && st.z[1] == -4) {
+            console.log(st.xq);
+        }
         const dim = getDimensions(SVG[quali]);
         const posX = transform.posX(st, dim);
         const posY = transform.posY(st, dim);

@@ -100,7 +100,7 @@ async function main() {
 
 
     const dotGeometry = new THREE.BufferGeometry();
-    dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,1]), 3));
+    dotGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,-1]), 3));
     const dotMaterial = new THREE.PointsMaterial({ size: 1, color: 0xff0000 });
     const dot = new THREE.Points(dotGeometry, dotMaterial);
     SETTINGS.scene.add(dot);

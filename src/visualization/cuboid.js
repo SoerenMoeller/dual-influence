@@ -10,7 +10,7 @@ function drawCuboid(scene, sts, baseGeometry, opacity, name) {
     const dummy = new THREE.Object3D();
     for (let i = 0; i < mesh.count; i++) {
         const st = sts[i];
-        dummy.position.set(st.centerX(), st.centerY(), st.centerZ());
+        dummy.position.set(st.centerX(), st.centerY(), -st.centerZ());
         dummy.scale.set(st.width(), st.height(), st.depth());
         dummy.updateMatrix();
         mesh.setMatrixAt( i, dummy.matrix );
@@ -33,7 +33,7 @@ function drawCuboidEdges(scene, sts, baseGeometry) {
     const instScale =[];
     for (let i = 0; i < sts.length; i++) {
         const st = sts[i];
-        instPos.push(st.centerX(), st.centerY(), st.centerZ());
+        instPos.push(st.centerX(), st.centerY(), -st.centerZ());
         instScale.push(st.width(), st.height(), st.depth());
     }
 

@@ -65,7 +65,10 @@ function createDotStatement(xOverlapMap, overlappingZ, x, z) {
 }
 
 function createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z) {
-    const overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+    if (x == -16 && nextX == -12 && z == -4) {
+        debugger;
+    }
+    const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
     const ys = ST.intersectY(sts);
     const quali = ST.qualiMin(sts, C.X_AXIS);
@@ -81,7 +84,7 @@ function createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z) {
 
 function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
     const overlappingX = xOverlapMap.get(x);
-    const overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+    const overlappingZ = JS.intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
     const quali = ST.qualiMin(sts, "z");
     
@@ -96,11 +99,11 @@ function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
 }
 
 function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
-    if (x == -16 && nextX == -12 && z == -4 && nextZ == 0) {
+    if (x == -16 && nextX == -12 && z == 0 && nextZ == 4) {
         debugger;
     }
-    const overlappingX = JS.unionSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
-    const overlappingZ = JS.unionSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+    const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+    const overlappingZ = JS.intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
     const ys = ST.intersectY(sts);
     const qualiX = ST.qualiMin(sts, C.X_AXIS);
