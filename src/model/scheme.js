@@ -65,9 +65,6 @@ function createDotStatement(xOverlapMap, overlappingZ, x, z) {
 }
 
 function createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z) {
-    if (x == -16 && nextX == -12 && z == -4) {
-        debugger;
-    }
     const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
     const ys = ST.intersectY(sts);
@@ -99,9 +96,6 @@ function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
 }
 
 function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
-    if (x == -16 && nextX == -12 && z == 0 && nextZ == 4) {
-        debugger;
-    }
     const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const overlappingZ = JS.intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
@@ -202,44 +196,91 @@ function seperate(scheme) {
 function prune(scheme) {
     const indexMap = createIndexMap(scheme);
     const sts = scheme.statements;
-    const queue = new Set(sts.flat());
+    let queue = sts.flat();
     const n = scheme.statements[0].length;
     const m = scheme.statements.length;
 
-    while (queue.size != 0) {
-        const st = queue.values().next().value;
+    while (queue.length != 0) {
+        const st = queue[0];
+        queue = queue.slice(1);
+
+        if (st.x[0] == -16 && st.x[1] == -12 && st.z[0] == 0 && st.z[1] == 0) {
+            debugger;
+        }
 
         const [i, j] = indexMap.get(st);
-        if (i+1 < m) {
-            const rightNeighbor = sts[i+1][j]
+        if (j+1 < n) {
+            const rightNeighbor = sts[i][j+1]
             const result = RULES.left(st, rightNeighbor);
             if (result) {
-                queue.add(rightNeighbor);
-            }
-        }
-        if (i-1 >= 0) {
-            const leftNeighbor = sts[i-1][j]
-            const result = RULES.right(leftNeighbor, st);
-            if (result) {
-                queue.add(leftNeighbor);
+                if (j-1 >= 0) {
+                    queue.push(sts[i][j-1]);
+                }
+                if (j+1 < n) {
+                    queue.push(sts[i][j+1]);
+                }
+                if (i-1 >= 0) {
+                    queue.push(sts[i-1][j]);
+                }
+                if (i+1 < m) {
+                    queue.push(sts[i+1][j]);
+                }
             }
         }
         if (j-1 >= 0) {
-            const frontNeighbor = sts[i][j-1]
+            const leftNeighbor = sts[i][j-1]
+            const result = RULES.right(leftNeighbor, st);
+            if (result) {
+                if (j-1 >= 0) {
+                    queue.push(sts[i][j-1]);
+                }
+                if (j+1 < n) {
+                    queue.push(sts[i][j+1]);
+                }
+                if (i-1 >= 0) {
+                    queue.push(sts[i-1][j]);
+                }
+                if (i+1 < m) {
+                    queue.push(sts[i+1][j]);
+                }
+            }
+        }
+        if (i+1 < m) {
+            const frontNeighbor = sts[i+1][j]
             const result = RULES.back(frontNeighbor, st);
             if (result) {
-                queue.add(frontNeighbor);
+                if (j-1 >= 0) {
+                    queue.push(sts[i][j-1]);
+                }
+                if (j+1 < n) {
+                    queue.push(sts[i][j+1]);
+                }
+                if (i-1 >= 0) {
+                    queue.push(sts[i-1][j]);
+                }
+                if (i+1 < m) {
+                    queue.push(sts[i+1][j]);
+                }
             }
         }
-        if (j+1 < n) {
-            const backNeighbor = sts[i][j+1]
+        if (i-1 >= 0) {
+            const backNeighbor = sts[i-1][j]
             const result = RULES.front(st, backNeighbor);
             if (result) {
-                queue.add(backNeighbor);
+                if (j-1 >= 0) {
+                    queue.push(sts[i][j-1]);
+                }
+                if (j+1 < n) {
+                    queue.push(sts[i][j+1]);
+                }
+                if (i-1 >= 0) {
+                    queue.push(sts[i-1][j]);
+                }
+                if (i+1 < m) {
+                    queue.push(sts[i+1][j]);
+                }
             }
         }
-
-        queue.delete(st);
     }
 }
 

@@ -11,13 +11,6 @@ export function build(scheme, scene) {
     fillFirstRow(scheme, cornerFn);
     fillOtherRows(scheme, cornerFn);
     console.log(cornerFn);
-    /*
-    selectFirstTwoPoints(scheme, cornerFn);
-    const sts = scheme.statements;
-    for (let i = sts.lentgh - 2; i >= 0; i -= 2) {
-        selectTopPoints(scheme, i, cornerFn);
-    }
-    */
     TRIANGLE.draw(scene, scheme, cornerFn);
 }
 

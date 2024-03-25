@@ -44,13 +44,17 @@ export function drawUnitZQualities(scene, sts) {
  * @param {String} quali Quality to draw.
  */
 function drawUnitZSVGs(scene, sts, quali) {
+    const rotate = [0, 0, 0];
+    if (quali == C.MONO || quali == C.ANTI) {
+        rotate[2] = Math.PI/2;
+    }
     const transform = {
         axis: "x",
         posX: (st, dim) => st.centerX() - dim.width/2,
         posY: (st, dim) => st.y[0] + st.height()/2,
         posZ: (st, dim) => -st.z[0],
         scale: (st) => Math.min(st.width(), st.height()),
-        rotate: [0, 0, Math.PI/2]
+        rotate: rotate
     }
 
     drawCuboidSVGs(scene, sts, quali, transform);
