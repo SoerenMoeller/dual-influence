@@ -13,7 +13,6 @@ export function draw(scene, scheme, cornerFn) {
         const rightBack = cornerFn.get(st.x[1]).get(st.z[1]);
 
         if (isNaN(leftFront)|| isNaN(rightFront) || isNaN(leftBack) || isNaN(rightBack)) {
-            console.log("error");
             continue;
         }
 
@@ -25,7 +24,6 @@ export function draw(scene, scheme, cornerFn) {
         corners.push(st.x[1], rightBack, -st.z[1]);
         corners.push(st.x[0], leftBack, -st.z[1]);
     }
-    console.log(corners);
     const vertices = new Float32Array(corners);
 
     // itemSize = 3 because there are 3 values (components) per vertex
@@ -35,5 +33,7 @@ export function draw(scene, scheme, cornerFn) {
     const edges = new THREE.EdgesGeometry( geometry );
     const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );  
     const mesh = new THREE.Mesh( geometry, material );
+    mesh.name = "connector-mesh";
+    line.name = "connector-line";
     scene.add(mesh, line);
 }

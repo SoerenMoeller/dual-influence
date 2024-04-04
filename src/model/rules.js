@@ -53,7 +53,6 @@ function rightAnti(stA, stB) {
 }
 
 export function front(stA, stB) {
-    debugger;
     if (JSON.stringify(stA.x) != JSON.stringify(stB.x) || stA.z[1] != stB.z[0]
         || stA === undefined || stB === undefined) {
         return false;

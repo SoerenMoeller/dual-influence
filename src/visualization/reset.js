@@ -26,3 +26,14 @@ export function resetBehaviors(scene) {
         svg = scene.getObjectByName("behavior");
     }
 }
+
+export function resetConnector(scene) {
+    const mesh = scene.getObjectByName("connector-mesh");
+    const line = scene.getObjectByName("connector-line");
+    if (mesh !== undefined) {
+        scene.remove(mesh);
+    }
+    if (line !== undefined) {
+        scene.remove(line);
+    }
+}

@@ -204,10 +204,6 @@ function prune(scheme) {
         const st = queue[0];
         queue = queue.slice(1);
 
-        if (st.x[0] == -16 && st.x[1] == -12 && st.z[0] == 0 && st.z[1] == 0) {
-            debugger;
-        }
-
         const [i, j] = indexMap.get(st);
         if (j+1 < n) {
             const rightNeighbor = sts[i][j+1]
@@ -353,23 +349,6 @@ function buildOverlapMap(sts, name) {
 
     const sortedBounds = [...new Set(bounds)].sort((a, b) => a - b);
     extendOverlapMap(sortedBounds, map);
-
-    // verify map (just for now because I am paranoid)
-    for (const bound of sortedBounds) {
-        for (const st of map.get(bound)) {
-            if (!(bound <= st[name][1] && bound >= st[name][0])) {
-                console.log("ERROR!");
-            }
-        }
-    }
-    for (const st of sts) {
-        const relevantBounds = sortedBounds.filter((e) => e >= st[name][0] && e <= st[name][1]);
-        for (const bound of relevantBounds) {
-            if (!(map.get(bound).has(st))) {
-                console.log("ERROR!");
-            }
-        }
-    }
 
     return [sortedBounds, map];
 }

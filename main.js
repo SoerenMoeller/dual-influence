@@ -72,8 +72,21 @@ async function main() {
         SCHEME.normalize(SETTINGS.scheme);
     });
     connectorButton.addEventListener("click", (e) => {
-        SCHEME.normalize(SETTINGS.scheme);
-        CONNECTOR.build(SETTINGS.scheme, SETTINGS.scene);
+        SETTINGS.showConnector = !SETTINGS.showConnector; 
+
+        if (SETTINGS.showConnector) {
+            SCHEME.normalize(SETTINGS.scheme);
+            CONNECTOR.build(SETTINGS.scheme, SETTINGS.scene);
+
+            SETTINGS.opacity = 0;
+            stOpacityPicker.value = 0;
+            RESET.changeOpacity(SETTINGS.scene, SETTINGS.opacity);
+
+            connectorButton.textContent = "Hide Connector";
+        } else {
+            RESET.resetConnector(SETTINGS.scene);
+            connectorButton.textContent = "Build Connector";
+        }
     });
     document.addEventListener("mousemove", (e) => {
         var vec = new THREE.Vector3(); // create once and reuse

@@ -153,9 +153,6 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
     const instRotate = [];
     for (let i = 0; i < sts.length; i++) {
         const st = sts[i]
-        if (st.x[0] == -16 && st.x[1] == -12 && st.z[0] == -4 && st.z[1] == -4) {
-            console.log(st.xq);
-        }
         const dim = getDimensions(SVG[quali]);
         const posX = transform.posX(st, dim);
         const posY = transform.posY(st, dim);

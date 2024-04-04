@@ -10,7 +10,6 @@ export function build(scheme, scene) {
     selectFirstPoint(scheme, cornerFn);
     fillFirstRow(scheme, cornerFn);
     fillOtherRows(scheme, cornerFn);
-    console.log(cornerFn);
     TRIANGLE.draw(scene, scheme, cornerFn);
 }
 
@@ -70,12 +69,6 @@ function fillOtherRows(scheme, cornerFn) {
         restrictBounds(lbounds, ubounds, combinedBehavior, lastValue2);
 
         let value = (Math.max(...lbounds) + Math.min(...ubounds)) / 2;
-        if (isNaN(value)) {
-            debugger;
-        }
-        if (!rangeCheck(sts[i-2][0], value)) {
-            debugger;
-        }
         addEntry(cornerFn, sts[i-2][0].x[0], sts[i-2][0].z[0], value);
 
         for (let j = 3; j < sts[i].length - 1; j += 2) {
@@ -96,16 +89,6 @@ function fillOtherRows(scheme, cornerFn) {
             restrictBounds(lbounds, ubounds, prevBehavior, lastValue3);
 
             const value = (Math.max(...lbounds) + Math.min(...ubounds)) / 2;
-            if (value == 2.8575439453125) {
-                debugger;
-            }
-            if (isNaN(value)) {
-                debugger;
-            }
-            if (!rangeCheck(sts[i-2][j-1], value)) {
-                const st = sts[i-2][j-1];
-                debugger;
-            }
             rangeCheck(sts[i-2][j-1], value);
             addEntry(cornerFn, sts[i-2][j-1].x[0], sts[i-2][j-1].z[0], value);
         }
@@ -122,12 +105,6 @@ function fillOtherRows(scheme, cornerFn) {
         restrictBounds(lbounds, ubounds, rightBehavior, lastValue2);
 
         value = (Math.max(...lbounds) + Math.min(...ubounds)) / 2;
-        if (isNaN(value)) {
-            debugger;
-        }
-        if (!rangeCheck(sts[i-2][sts[i-2].length - 1], value)) {
-           debugger;
-        }
         addEntry(cornerFn, sts[i-2][sts[i-2].length - 1].x[0], sts[i-2][sts[i-2].length - 1].z[0], value);
     }
 }
@@ -151,9 +128,8 @@ function combineBehaviors(qb, qr) {
 
 function rangeCheck(st, y) {
     if (st.y[0] <= y && st.y[1] >= y) {
-        return true;
+        return;
     }
-    return false;
     throw new Error(`Error: ${y} is not in range of statement ${st}`);
 }
 
