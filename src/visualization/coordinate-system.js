@@ -2,8 +2,8 @@ import * as THREE from "three";
 import * as C from "../constants.js";
 import * as typedef from "../typedefs.js";
 import * as JS from "../js-helper.js";
+import { SVGLoader } from "three/addons/loaders/SVGLoader";
 
-// look into axis helper?
 
 /**
  * Draws the coordinate system.
@@ -70,8 +70,14 @@ function drawAxes(scene, axes) {
         // TODO: Make arrow-head size universal?
         const arrow = new THREE.ArrowHelper(axis.dir, origin, length, C.GREEN, length*0.05);
         arrow.line.material.linewidth = 2;
-        arrow.name = `${axis.name}-axis`;
         scene.add(arrow);
+
+        const map = new THREE.TextureLoader().load( `../../imgs/${axis.name}.png` );
+        const material = new THREE.SpriteMaterial( { map: map, side: THREE.DoubleSide } );
+        const sprite = new THREE.Sprite( material );
+        const pos = axis.dir.multiplyScalar(axis.maxBound + 1);
+        sprite.position.set(pos.x, pos.y, pos.z);
+        scene.add(sprite);
     }
 }
 

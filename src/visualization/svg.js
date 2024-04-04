@@ -141,6 +141,7 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
     const instancedGeom = new THREE.InstancedBufferGeometry().copy(SVG[quali].geometry);
     instancedGeom.instanceCount = sts.length;
     const material = new THREE.MeshBasicMaterial({ 
+        side: THREE.DoubleSide,
         color: 0x000000,
         onBeforeCompile: shader => {
             shader.vertexShader = document.getElementById('vertex-shader-rotate').textContent;

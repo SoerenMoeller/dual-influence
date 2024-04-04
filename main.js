@@ -110,7 +110,7 @@ function changeCameraMode() {
         // this could be improved by determining the camera distance to the
         // center of the coordinate system using its fov.
         let x = 0;
-        let y = 10 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
+        let y = 4 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
         let z = SETTINGS.scheme.bounds.z[1] - SETTINGS.scheme.bounds.z[0];
         SETTINGS.camera.position.set(x, y, z);
 

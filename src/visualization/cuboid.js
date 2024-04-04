@@ -4,7 +4,7 @@ import * as C from "../constants.js";
 import * as typedef from "../typedefs.js";
 
 function drawCuboid(scene, sts, baseGeometry, opacity, name) {
-    const materialBox = new THREE.MeshBasicMaterial( {color: C.WHITE, opacity: opacity, transparent: true} ); 
+    const materialBox = new THREE.MeshBasicMaterial( {color: C.WHITE, opacity: opacity, transparent: true, side: THREE.DoubleSide} ); 
     const mesh = new THREE.InstancedMesh(baseGeometry, materialBox, sts.length);
 
     const dummy = new THREE.Object3D();
