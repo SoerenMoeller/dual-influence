@@ -75,8 +75,9 @@ function drawAxes(scene, axes) {
         const map = new THREE.TextureLoader().load( `../../imgs/${axis.name}.png` );
         const material = new THREE.SpriteMaterial( { map: map, side: THREE.DoubleSide } );
         const sprite = new THREE.Sprite( material );
-        const pos = axis.dir.multiplyScalar(axis.maxBound + 1);
+        const pos = axis.dir.multiplyScalar(axis.maxBound + length / 20);
         sprite.position.set(pos.x, pos.y, pos.z);
+        sprite.scale.set(length / 20, length / 20, length / 20);
         scene.add(sprite);
     }
 }

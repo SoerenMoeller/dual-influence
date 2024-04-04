@@ -31,7 +31,7 @@ export function draw(scene, scheme, cornerFn) {
     // itemSize = 3 because there are 3 values (components) per vertex
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-    const material = new THREE.MeshBasicMaterial( { color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.6 } );
+    const material = new THREE.MeshBasicMaterial( { color: 0x7b9dd4, side: THREE.DoubleSide, opacity: 0.6 } );
     const edges = new THREE.EdgesGeometry( geometry );
     const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );  
     const mesh = new THREE.Mesh( geometry, material );
