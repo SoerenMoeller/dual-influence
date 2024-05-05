@@ -3,15 +3,16 @@ import * as ST from "./statement.js";
 import * as typedef from "../util/TypeDefs.js";
 import * as MAIN from "../../main.js";
 import * as JS from "../js-helper.js";
-import * as C from "../util/Constants.js";
+import { EXAMPLES_FOLDER } from "../util/Constants.js";
 
 /**
- * Reads scheme from json file (under path), adds bounds for the axes 
+ * Reads scheme from json file, adds bounds for the axes 
  * and maps statements to intern representation.
- * @param {string} path 
+ * @param {string} exampleName 
  * @returns {typedef.Scheme}
  */
-export async function setup(path) {
+export async function loadSchemeFromFile(exampleName) {
+    const path = `../../${EXAMPLES_FOLDER}/${exampleName}.json`;
     function processModel(rawModel) {
         return {
             x: rawModel.x,

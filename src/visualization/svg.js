@@ -18,7 +18,7 @@ loadAllSVGs();
 /**
  * Loads all SVGs from imgs/.
  */
-function loadAllSVGs() {
+export function loadAllSVGs() {
     for (const quali of Constants.QUALIS) {
         loadSVG(quali);
     }
@@ -138,6 +138,9 @@ function drawCuboidSVGs(scene, sts, quali, transform) {
         return;
     }
 
+    console.log(SVG);
+    loadAllSVGs();
+    console.log(SVG);
     const instancedGeom = new THREE.InstancedBufferGeometry().copy(SVG[quali].geometry);
     instancedGeom.instanceCount = sts.length;
     const material = new THREE.MeshBasicMaterial({ 
@@ -234,7 +237,7 @@ function getDimensions(svg) {
  * @returns {string}
  */
 function qualiToPath(quali) {
-    return `imgs/${quali}.svg`;
+    return `${Constants.ASSETS_FOLDER}/${quali}.svg`;
 }
 
 /**

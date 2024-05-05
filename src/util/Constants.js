@@ -16,3 +16,5 @@ export const LIGHT_GREY = 0x9a9a9a;
 
 export const EXAMPLES_FOLDER = "examples";
 export const ASSETS_FOLDER = "assets";
+
+export const CANVAS_ID = "drawArea";

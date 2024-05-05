@@ -1,27 +1,26 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import SETTINGS from "./src/util/Settings.js";
+import * as SceneController from "./src/controller/SceneController.js"
+import * as SchemeController from "./src/controller/SchemeController.js"
 import * as CoordinateSystem from "./src/view/CoordinateSystemView.js";
 import * as CONNECTOR from "./src/model/connector.js";
 import * as Constants from "./src/util/Constants.js"
 import * as CUBOID from "./src/visualization/cuboid.js";
-import * as SCHEME from "./src/model/scheme.js";
+import * as SCHEME from "./src/model/Scheme.js";
 import * as RESET from "./src/visualization/reset.js";
 
-const SETTINGS = {
-    showGrid: false,
-    showConnector: false,
-    gridSize: 10,
-    example: "example2",
-    interactiveMode: false,
-    opacity: 0.3,
-    threshold: 50
-}
 
 document.addEventListener("DOMContentLoaded", (e) => {
     main();
 });
 
-async function main() {
+function main() {
+    SceneController.init();
+    SchemeController.init(SETTINGS.example);
+}
+
+async function main2() {
     const interactiveCheckBox = document.getElementById("interactive-checkbox");
     const showGridCheckBox = document.getElementById("show-grid-checkbox");
     const behaviorThresholdField = document.getElementById("behavior-threshold");
@@ -143,7 +142,7 @@ export function loadScheme(scheme) {
 
     SETTINGS.scheme = scheme
     CoordinateSystem.drawCoordinateSystem(SETTINGS.scene, SETTINGS.scheme);
-    //CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
+    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
     //SETTINGS.scene.traverse( function( object ) {
     //    object.frustumCulled = false;
     //} );
