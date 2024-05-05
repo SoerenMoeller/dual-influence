@@ -1,25 +1,26 @@
-import * as RULES from "./rules.js";
-import * as ST from "./statement.js";
-import * as typedef from "../util/TypeDefs.js";
-import * as MAIN from "../../main.js";
+import * as TypeDef from "../util/TypeDefs.js";
+import * as Rules from "./rules.js";
+import * as Statement from "./statement.js";
+import * as Constants from "../util/Constants.js";
+import * as main from "../../main.js";
 import * as JS from "../js-helper.js";
-import { EXAMPLES_FOLDER } from "../util/Constants.js";
+import * as SchemeController from "../controller/SchemeController.js";
 
 /**
  * Reads scheme from json file, adds bounds for the axes 
  * and maps statements to intern representation.
  * @param {string} exampleName 
- * @returns {typedef.Scheme}
+ * @returns {TypeDef.Scheme}
  */
 export async function loadSchemeFromFile(exampleName) {
-    const path = `../../${EXAMPLES_FOLDER}/${exampleName}.json`;
+    const path = `../../${Constants.EXAMPLES_FOLDER}/${exampleName}.json`;
     function processModel(rawModel) {
         return {
             x: rawModel.x,
             y: rawModel.y, 
             z: rawModel.z,
             normalized: false,
-            statements: [...new Set(rawModel.statements.map(ST.create))],
+            statements: [...new Set(rawModel.statements.map(Statement.create))],
             bounds: {
                 x: getBounds(rawModel, 0),
                 y: getBounds(rawModel, 4),
@@ -34,6 +35,25 @@ export async function loadSchemeFromFile(exampleName) {
         .catch(error => console.error('Error fetching JSON:', error));
 
     return scheme;
+}
+
+/**
+ * 
+ * @param {TypeDef.scheme} scheme 
+ * @returns 
+ */
+export function splitScheme(scheme) {
+    const statements = scheme.statements.flat();
+    return {
+        nonUnit: statements.filter((e) => {return e.width() != 0 && e.depth() != 0 && e.height() != 0}),
+        nonUnitH: statements.filter((e) => {return e.width() != 0 && e.depth() != 0 && e.height() == 0}),
+        unitX: statements.filter((e) => {return e.width() == 0 && e.depth() != 0 && e.height() != 0}),
+        unitXH: statements.filter((e) => {return e.width() == 0 && e.depth() != 0 && e.height() == 0}),
+        unitZ: statements.filter((e) => {return e.width() != 0 && e.depth() == 0 && e.height() != 0}),
+        unitZH: statements.filter((e) => {return e.width() != 0 && e.depth() == 0 && e.height() == 0}),
+        unit: statements.filter((e) => {return e.width() == 0 && e.depth() == 0 && e.height() != 0}),
+        unitH: statements.filter((e) => {return e.width() == 0 && e.depth() == 0 && e.height() == 0})
+    }    
 }
 
 /**
@@ -55,28 +75,25 @@ function createDotStatement(xOverlapMap, overlappingZ, x, z) {
     const overlappingX = xOverlapMap.get(x);
     const sts = JS.intersectSet(overlappingX, overlappingZ);
     
-    const ys = ST.intersectY(sts);
-    return ST.addFunctions({
-        x: [x, x],
-        z: [z, z],
-        y: ys,
-        xq: C.CONST,
-        zq: C.CONST
+    const ys = Statement.intersectY(sts);
+    return Statement.addFunctions({
+        xq: Constants.CONST,
+        zq: Constants.CONST
     });
 }
 
 function createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z) {
     const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
-    const ys = ST.intersectY(sts);
-    const quali = ST.qualiMin(sts, C.X_AXIS);
+    const ys = Statement.intersectY(sts);
+    const quali = Statement.qualiMin(sts, Constants.X_AXIS);
 
-    return ST.addFunctions({
+    return Statement.addFunctions({
         x: [x, nextX],
         z: [z, z],
         y: ys,
         xq: quali,
-        zq: C.CONST
+        zq: Constants.CONST
     });
 }
 
@@ -84,14 +101,14 @@ function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
     const overlappingX = xOverlapMap.get(x);
     const overlappingZ = JS.intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
-    const quali = ST.qualiMin(sts, "z");
+    const quali = Statement.qualiMin(sts, "z");
     
-    const ys = ST.intersectY(sts);
-    return ST.addFunctions({
+    const ys = Statement.intersectY(sts);
+    return Statement.addFunctions({
         x: [x, x],
         z: [z, nextZ],
         y: ys,
-        xq: C.CONST,
+        xq: Constants.CONST,
         zq: quali
     });
 }
@@ -100,11 +117,11 @@ function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
     const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
     const overlappingZ = JS.intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
     const sts = JS.intersectSet(overlappingX, overlappingZ);
-    const ys = ST.intersectY(sts);
-    const qualiX = ST.qualiMin(sts, C.X_AXIS);
-    const qualiZ = ST.qualiMin(sts, C.Z_AXIS);
+    const ys = Statement.intersectY(sts);
+    const qualiX = Statement.qualiMin(sts, Constants.X_AXIS);
+    const qualiZ = Statement.qualiMin(sts, Constants.Z_AXIS);
 
-    return ST.addFunctions({
+    return Statement.addFunctions({
         x: [x, nextX],
         z: [z, nextZ],
         y: ys,
@@ -170,8 +187,8 @@ function createIndexMap(scheme) {
  */
 function seperate(scheme) {
     const sts = scheme.statements;
-    const [xBounds, xOverlapMap] = buildOverlapMap(sts, C.X_AXIS);
-    const [zBounds, zOverlapMap] = buildOverlapMap(sts, C.Z_AXIS);
+    const [xBounds, xOverlapMap] = buildOverlapMap(sts, Constants.X_AXIS);
+    const [zBounds, zOverlapMap] = buildOverlapMap(sts, Constants.Z_AXIS);
 
     const newScheme = {...scheme};
     newScheme.statements = [];
@@ -208,7 +225,7 @@ function prune(scheme) {
         const [i, j] = indexMap.get(st);
         if (j+1 < n) {
             const rightNeighbor = sts[i][j+1]
-            const result = RULES.left(st, rightNeighbor);
+            const result = Rules.left(st, rightNeighbor);
             if (result) {
                 if (j-1 >= 0) {
                     queue.push(sts[i][j-1]);
@@ -226,7 +243,7 @@ function prune(scheme) {
         }
         if (j-1 >= 0) {
             const leftNeighbor = sts[i][j-1]
-            const result = RULES.right(leftNeighbor, st);
+            const result = Rules.right(leftNeighbor, st);
             if (result) {
                 if (j-1 >= 0) {
                     queue.push(sts[i][j-1]);
@@ -244,7 +261,7 @@ function prune(scheme) {
         }
         if (i+1 < m) {
             const frontNeighbor = sts[i+1][j]
-            const result = RULES.back(frontNeighbor, st);
+            const result = Rules.back(frontNeighbor, st);
             if (result) {
                 if (j-1 >= 0) {
                     queue.push(sts[i][j-1]);
@@ -262,7 +279,7 @@ function prune(scheme) {
         }
         if (i-1 >= 0) {
             const backNeighbor = sts[i-1][j]
-            const result = RULES.front(st, backNeighbor);
+            const result = Rules.front(st, backNeighbor);
             if (result) {
                 if (j-1 >= 0) {
                     queue.push(sts[i][j-1]);
@@ -293,7 +310,9 @@ export function normalize(scheme) {
     const newScheme = seperate(scheme);
     prune(newScheme);
     newScheme.normalized = true;
-    MAIN.loadScheme(newScheme);
+    
+    SchemeController.stop();
+    SchemeController.init(newScheme);
 }
 
 /**

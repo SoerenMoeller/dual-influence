@@ -2,7 +2,7 @@ export const ARB = "arb";
 export const MONO = "mono";
 export const ANTI = "anti";
 export const CONST = "const";
-export const QUALIS = [MONO, ANTI, CONST, ARB];
+export const BEHAVIORS = [MONO, ANTI, CONST, ARB];
 
 export const X_AXIS = "x";
 export const Y_AXIS = "y";

@@ -6,18 +6,19 @@ import * as SchemeController from "./src/controller/SchemeController.js"
 import * as CoordinateSystem from "./src/view/CoordinateSystemView.js";
 import * as CONNECTOR from "./src/model/connector.js";
 import * as Constants from "./src/util/Constants.js"
-import * as CUBOID from "./src/visualization/cuboid.js";
 import * as SCHEME from "./src/model/Scheme.js";
 import * as RESET from "./src/visualization/reset.js";
+import * as Scheme from "./src/model/Scheme.js";
 
 
 document.addEventListener("DOMContentLoaded", (e) => {
     main();
 });
 
-function main() {
+async function main() {
     SceneController.init();
-    SchemeController.init(SETTINGS.example);
+    const scheme = await Scheme.loadSchemeFromFile(SETTINGS.example);
+    SchemeController.init(scheme);
 }
 
 async function main2() {
@@ -113,28 +114,6 @@ async function main2() {
     await loadSchemeFromFile();
 }
 
-function changeCameraMode() {
-    const interactive = SETTINGS.interactiveMode;
-    SETTINGS.controls.enableRotate = interactive;
-    SETTINGS.controls.enableZoom = interactive;
-    SETTINGS.controls.enablePan = interactive;
-    SETTINGS.controls.autoRotate = !interactive;
-
-    if (!interactive) {
-        // this could be improved by determining the camera distance to the
-        // center of the coordinate system using its fov.
-        let x = 0;
-        let y = 3 * (SETTINGS.scheme.bounds.y[1] - SETTINGS.scheme.bounds.y[0]);
-        let z = SETTINGS.scheme.bounds.z[1] - SETTINGS.scheme.bounds.z[0];
-        SETTINGS.camera.position.set(x, y, z);
-
-        x = SETTINGS.scheme.bounds.x[1]; - SETTINGS.scheme.bounds.x[0];
-        y = SETTINGS.scheme.bounds.y[1]; - SETTINGS.scheme.bounds.y[0];
-        z = SETTINGS.scheme.bounds.z[1]; - SETTINGS.scheme.bounds.z[0];
-        SETTINGS.camera.lookAt(x, y, z);
-    }
-}
-
 export function loadScheme(scheme) {
     if (Object.hasOwn(SETTINGS, "scheme")) {
         RESET.resetScheme(SETTINGS.scene , SETTINGS.scheme);
@@ -142,7 +121,7 @@ export function loadScheme(scheme) {
 
     SETTINGS.scheme = scheme
     CoordinateSystem.drawCoordinateSystem(SETTINGS.scene, SETTINGS.scheme);
-    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
+    //CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
     //SETTINGS.scene.traverse( function( object ) {
     //    object.frustumCulled = false;
     //} );
