@@ -1,7 +1,8 @@
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import * as CONNECTOR from "./src/model/connector.js";
 import * as THREE from "three";
-import * as CS from "./src/visualization/coordinate-system.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import * as CoordinateSystem from "./src/view/CoordinateSystemView.js";
+import * as CONNECTOR from "./src/model/connector.js";
+import * as Constants from "./src/util/Constants.js"
 import * as CUBOID from "./src/visualization/cuboid.js";
 import * as SCHEME from "./src/model/scheme.js";
 import * as RESET from "./src/visualization/reset.js";
@@ -49,7 +50,7 @@ async function main() {
 
         RESET.resetGrid(SETTINGS.scene);
         if (SETTINGS.showGrid) {
-            CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
+            CoordinateSystem.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
         } 
     });
     showGridCheckBox.addEventListener("change", (e) => {
@@ -57,7 +58,7 @@ async function main() {
 
         RESET.resetGrid(SETTINGS.scene);
         if (SETTINGS.showGrid) {
-            CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
+            CoordinateSystem.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
         } 
     });
     behaviorThresholdField.addEventListener("change", (e) => {
@@ -141,21 +142,18 @@ export function loadScheme(scheme) {
     }
 
     SETTINGS.scheme = scheme
-    CS.drawCS(SETTINGS.scene, SETTINGS.scheme);
-    if (SETTINGS.showGrid) {
-        CS.drawGrid(SETTINGS.scene, SETTINGS.scheme, SETTINGS.gridSize);
-    } 
-    CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
-    SETTINGS.scene.traverse( function( object ) {
-        object.frustumCulled = false;
-    } );
+    CoordinateSystem.drawCoordinateSystem(SETTINGS.scene, SETTINGS.scheme);
+    //CUBOID.drawScheme(SETTINGS.scene, SETTINGS.scheme, SETTINGS.opacity);
+    //SETTINGS.scene.traverse( function( object ) {
+    //    object.frustumCulled = false;
+    //} );
 
     changeCameraMode();
 }
 
 async function loadSchemeFromFile() {
     const exampleSelect = document.getElementById("example-picker");
-    const path = `data/${exampleSelect.value}.json`;
+    const path = `${Constants.EXAMPLES_FOLDER}/${exampleSelect.value}.json`;
     if (Object.hasOwn(SETTINGS, "scheme")) {
         RESET.resetScheme(SETTINGS.scene , SETTINGS.scheme);
     }
@@ -165,6 +163,7 @@ async function loadSchemeFromFile() {
 }
 
 function checkVisibilty() {
+    return;
     if (!Object.hasOwn(SETTINGS, "scheme")) {
         return;
     }

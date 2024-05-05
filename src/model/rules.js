@@ -1,4 +1,4 @@
-import * as C from "../constants.js";
+import * as C from "../util/Constants.js";
 
 export function left(stA, stB) {
     if (JSON.stringify(stA.z) != JSON.stringify(stB.z) || stA.x[1] != stB.x[0] 

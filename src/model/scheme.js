@@ -1,9 +1,9 @@
 import * as RULES from "./rules.js";
 import * as ST from "./statement.js";
-import * as typedef from "../typedefs.js";
+import * as typedef from "../util/TypeDefs.js";
 import * as MAIN from "../../main.js";
 import * as JS from "../js-helper.js";
-import * as C from "../constants.js";
+import * as C from "../util/Constants.js";
 
 /**
  * Reads scheme from json file (under path), adds bounds for the axes 

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as SVG from "./svg.js";
-import * as C from "../constants.js";
-import * as typedef from "../typedefs.js";
+import * as C from "../util/Constants.js";
+import * as typedef from "../util/TypeDefs.js";
 
 function drawCuboid(scene, sts, baseGeometry, opacity, name) {
     const materialBox = new THREE.MeshBasicMaterial( {color: C.WHITE, opacity: opacity, transparent: true, side: THREE.DoubleSide} ); 

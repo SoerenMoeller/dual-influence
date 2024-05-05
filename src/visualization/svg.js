@@ -1,7 +1,7 @@
 import { SVGLoader } from "three/addons/loaders/SVGLoader";
 import * as THREE from "three";
-import * as C from "../constants.js";
-import * as typedef from "../typedefs.js";
+import * as Constants from "../util/Constants.js";
+import * as typedef from "../util/TypeDefs.js";
 
 /**
  * Loads all svgs from imgs/ and visualizes the qualities of given statements.
@@ -19,7 +19,7 @@ loadAllSVGs();
  * Loads all SVGs from imgs/.
  */
 function loadAllSVGs() {
-    for (const quali of C.QUALIS) {
+    for (const quali of Constants.QUALIS) {
         loadSVG(quali);
     }
 }
@@ -31,7 +31,7 @@ function loadAllSVGs() {
  * @param {typedef.Statement[]} sts Statements to draw the qualities of.
  */
 export function drawUnitZQualities(scene, sts) {
-    for (const quali of C.QUALIS) {
+    for (const quali of Constants.QUALIS) {
         drawUnitZSVGs(scene, sts, quali);
     }
 }
@@ -45,7 +45,7 @@ export function drawUnitZQualities(scene, sts) {
  */
 function drawUnitZSVGs(scene, sts, quali) {
     const rotate = [0, 0, 0];
-    if (quali == C.MONO || quali == C.ANTI) {
+    if (quali == Constants.MONO || quali == Constants.ANTI) {
         rotate[2] = Math.PI/2;
     }
     const transform = {
@@ -67,7 +67,7 @@ function drawUnitZSVGs(scene, sts, quali) {
  * @param {typedef.Statement[]} sts Statements to draw the qualities of.
  */
 export function drawUnitXQualities(scene, sts) {
-    for (const quali of C.QUALIS) {
+    for (const quali of Constants.QUALIS) {
         drawUnitXSVGs(scene, sts, quali);
     }
 }
@@ -117,7 +117,7 @@ export function drawCuboidQualities(scene, sts) {
         rotate: [Math.PI/2, 0, 0]
     }
     
-    for (const quali of C.QUALIS) {
+    for (const quali of Constants.QUALIS) {
         drawCuboidSVGs(scene, sts, quali, transformX);
         drawCuboidSVGs(scene, sts, quali, transformZ);
     }
@@ -197,7 +197,7 @@ function loadSVG(name) {
 
         // resize it to a base size
         mesh.scale.set(SVG_BASESCALE, SVG_BASESCALE, 0);
-        if (name == C.ARB) {
+        if (name == Constants.ARB) {
             changeScale(mesh, 0.6, 1);
         }
         SVG[name] = mesh;

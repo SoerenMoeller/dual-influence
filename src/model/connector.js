@@ -1,4 +1,4 @@
-import * as C from "../constants.js";
+import * as C from "../util/Constants.js";
 import * as TRIANGLE from "../visualization/triangles.js";
 
 export function build(scheme, scene) {

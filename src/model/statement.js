@@ -1,5 +1,5 @@
-import * as typedef from "../typedefs";
-import * as C from "../constants.js";
+import * as typedef from "../util/TypeDefs.js";
+import * as C from "../util/Constants.js";
 
 /**
  * Create internal representation for statements.
