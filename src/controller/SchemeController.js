@@ -43,10 +43,22 @@ function init(scheme) {
     }
 
     // draw the behaviors
-    drawBehaviors(Settings.scene, scheme.statements.flat());
+    drawBehaviors(Settings.scene, Settings.scheme.statements.flat());
     
     // prevents some visual clipping
     Settings.scene.traverse(obj => obj.frustumCulled = false);
+
+    // sets up camera for initial view
+    let x = 0;
+    let y = 3 * (Settings.scheme.bounds.y[1] - Settings.scheme.bounds.y[0]);
+    let z = Settings.scheme.bounds.z[1] - Settings.scheme.bounds.z[0];
+    Settings.camera.position.set(x, y, z);
+
+    x = Settings.scheme.bounds.x[1]; - Settings.scheme.bounds.x[0];
+    y = Settings.scheme.bounds.y[1]; - Settings.scheme.bounds.y[0];
+    z = Settings.scheme.bounds.z[1]; - Settings.scheme.bounds.z[0];
+    Settings.camera.lookAt(x, y, z);
+
     changeCameraMode();
 }
 

@@ -24,6 +24,7 @@ header > button {
 main {
     width: 100%;
     height: 90%;
+    position: relative;
 }
 
 canvas {
@@ -98,23 +99,6 @@ canvas {
     justify-content: space-between;
 }
 
-
-
-
-#mouse-position {
-    min-width: 10rem;
-    height: 2rem;
-    background-color: white;
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-}
-
 .flex-space-between {
     display: flex;
     align-items: center;
@@ -126,20 +110,49 @@ canvas {
     font-size: 1.3rem;
 }
 
-.button {
+#mouse-position {
+    min-width: 10rem;
+    height: 2rem;
+    background-color: white;
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+#interactive-mode {
+    min-width: 10rem;
+    height: 2rem;
+    background-color: white;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+button {
     background-color: #21a67f;
     border: 1px solid black;
     border-radius: 0.3rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40%;
-    font-size: 0.1rem;
+    width: 7rem;
+    height: 2rem;
+    font-size: 1.2rem;
     cursor: pointer;
     user-select: none;
 }
 
-.button:hover {
+button:hover {
     background-color: #24b88b;
 }
 

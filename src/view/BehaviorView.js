@@ -178,6 +178,8 @@ function loadSVG(name) {
         if (name == Constants.ARB) {
             changeScale(mesh, 0.6, 1);
         }
+        mesh.material.depthTest = false;
+        mesh.renderOrder = 1;
         SVG[name] = mesh;
     });
 };
@@ -238,5 +240,6 @@ function drawBehaviors(scene, statements) {
     drawUnitZBehaviors(scene, sts.unitZ);
     drawNonUnitBehaviors(scene, sts.nonUnit);
 }
+
 
 export { loadAllSVGs, drawBehaviors };

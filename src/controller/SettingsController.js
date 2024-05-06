@@ -1,13 +1,10 @@
 import * as THREE from "three";
 import Settings from "../util/Settings";
-import * as Scheme from "../model/Scheme";
-import * as ConnectorController from "./ConnectorController";
-import * as MenuController from "./MenuController";
-import { changeCameraMode } from "./SceneController";
+import * as SceneController from "./SceneController";
 
 
 /**
- * Initializes the settings, the menu, and the buttons.
+ * Initializes the settings.
  */
 function init() {
     const interactiveCheckBox = document.getElementById("interactive-checkbox");
@@ -20,20 +17,39 @@ function init() {
     exampleSelect.value = Settings.example;
     stOpacityPicker.value = Settings.opacity;
 
-    initInteractiveMode();
+    setupInteractiveMode();
     initCoordinateView();
-    initNormalizer();
-
-    MenuController.init();
-    ConnectorController.init();
 }
 
 
-function initInteractiveMode() {
+function setupInteractiveMode() {
+    // default value
+    const setInteractiveField = (isSet) => {
+        const interacticeField = document.getElementById("interactive-mode");
+        const state = isSet ? "on" : "off";
+        interacticeField.innerText = `Interactive Mode: ${state}`;
+
+    }
+    setInteractiveField(Settings.interactiveMode);
+    
+    // on change
     const interactiveCheckBox = document.getElementById("interactive-checkbox");
-    interactiveCheckBox.addEventListener("change", (e) => {
+    interactiveCheckBox.addEventListener("change", (evt) => {
         Settings.interactiveMode = interactiveCheckBox.checked;
-        changeCameraMode()
+        setInteractiveField(Settings.interactiveMode);
+        SceneController.changeCameraMode();
+    });
+
+    // setup keybind
+    document.addEventListener("keydown", (evt) => {
+        if (evt.key === "i") {
+            Settings.interactiveMode = !Settings.interactiveMode;
+            interactiveCheckBox.checked = Settings.interactiveMode;
+            setInteractiveField(Settings.interactiveMode);
+            SceneController.changeCameraMode();
+
+            evt.stopImmediatePropagation();
+        } 
     });
 }
 
@@ -57,14 +73,6 @@ function initCoordinateView() {
         pos.copy( Settings.camera.position ).add( vec.multiplyScalar( distance ) );
         mousePositionField.innerHTML = `x: ${pos.x.toFixed(2)}, z: ${pos.y.toFixed(2)}`;
     });
-}
-
-
-function initNormalizer() {
-    //const normalizeButton = document.getElementById("normalize-button");
-    //normalizeButton.addEventListener("click", (e) => {
-    //    Scheme.normalize(Settings.scheme);
-    //});
 }
 
 

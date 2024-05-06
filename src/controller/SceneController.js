@@ -2,7 +2,10 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Settings from "../util/Settings";
 import * as SettingsController from "./SettingsController";
+import * as MenuController from "./MenuController";
 import * as SchemeController from "./SchemeController";
+import * as ConnectorController from "./ConnectorController";
+import * as NormalizeController from "./NormalizeController";
 import * as BehaviorView from "../view/BehaviorView";
 import { CANVAS_ID } from "../util/Constants";
 
@@ -11,7 +14,13 @@ import { CANVAS_ID } from "../util/Constants";
  * Initializes the scene.
  */
 function init() {
-    initScene();
+    setupScene();
+    setupCoordinateDetection();
+
+    SettingsController.init();
+    MenuController.init();
+    ConnectorController.init();
+    NormalizeController.init();
     SettingsController.init();
 }
 
@@ -19,7 +28,7 @@ function init() {
 /**
  * Initializes a threejs scene including camera and controls. 
  */
-function initScene() {
+function setupScene() {
     // create scene
     Settings.scene = new THREE.Scene();
     Settings.canvas = document.getElementById(CANVAS_ID);
@@ -38,12 +47,14 @@ function initScene() {
     
     // load svgs for rendering 
     BehaviorView.loadAllSVGs();
-        
+    
+    // check which svgs to render
+    setInterval(() => checkVisibilty(), 1500);
+
     function animate() {
-        requestAnimationFrame( animate );
+        requestAnimationFrame(animate);
         Settings.controls.update();
-        checkVisibilty(); 
-        renderer.render( Settings.scene, Settings.camera );
+        renderer.render(Settings.scene, Settings.camera);
     }
     animate();
 }
@@ -82,18 +93,34 @@ function changeCameraMode() {
     Settings.controls.autoRotate = !interactive;
 
     if (!interactive) {
-        // this could be improved by determining the camera distance to the
-        // center of the coordinate system using its fov.
-        let x = 0;
-        let y = 3 * (Settings.scheme.bounds.y[1] - Settings.scheme.bounds.y[0]);
-        let z = Settings.scheme.bounds.z[1] - Settings.scheme.bounds.z[0];
-        Settings.camera.position.set(x, y, z);
-
-        x = Settings.scheme.bounds.x[1]; - Settings.scheme.bounds.x[0];
-        y = Settings.scheme.bounds.y[1]; - Settings.scheme.bounds.y[0];
-        z = Settings.scheme.bounds.z[1]; - Settings.scheme.bounds.z[0];
+        const x = Settings.scheme.bounds.x[1]; - Settings.scheme.bounds.x[0];
+        const y = Settings.scheme.bounds.y[1]; - Settings.scheme.bounds.y[0];
+        const z = Settings.scheme.bounds.z[1]; - Settings.scheme.bounds.z[0];
         Settings.camera.lookAt(x, y, z);
     }
+}
+
+
+function setupCoordinateDetection() {
+    const mousePositionField = document.getElementById("mouse-position");
+    mousePositionField.innerText = "x: 0, z: 0";
+
+    document.addEventListener("mousemove", (e) => {
+        var vec = new THREE.Vector3(); 
+        var pos = new THREE.Vector3(); 
+
+        vec.set(
+            ( e.clientX / Settings.canvas.offsetWidth ) * 2 - 1,
+            - ( e.clientY / Settings.canvas.offsetHeight ) * 2 + 1,
+            0.5,
+        );
+            
+        vec.unproject( Settings.camera );
+        vec.sub( Settings.camera.position ).normalize();
+        var distance = - Settings.camera.position.z / vec.z;
+        pos.copy( Settings.camera.position ).add( vec.multiplyScalar( distance ) );
+        mousePositionField.innerText = `x: ${pos.x.toFixed(2)}, z: ${pos.y.toFixed(2)}`;
+    });
 }
 
 

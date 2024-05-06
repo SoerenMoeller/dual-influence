@@ -14,12 +14,13 @@
         <header>
             <h1>Dual Influence Visualizer</h1>
             <div></div>
-            <button>Normalize</button>
-            <button>Connector</button>
+            <button id="normalize-button">Normalize</button>
+            <button id="connector-button">Connector</button>
             <button id="menu-button">Menu</button>
         </header>
         <main>
             <div id="mouse-position"></div>
+            <div id="interactive-mode"></div>
             <canvas id="draw-area"></canvas>
         </main>
         <div id="menu-overlay">
@@ -37,15 +38,8 @@
                     </label>
                 </div>
                 <div class="flex-space-between">
-                    <div>Show Grid</div>
-                    <label class="switch">
-                        <input type="checkbox" id="show-grid-checkbox">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="flex-space-between">
                     <div>Behavior Threshold</div>
-                    <input type="number" id="behavior-threshold" name="behavior-threshold" min="1" max="1000" value="1">
+                    <input type="range" id="behavior-threshold" name="behavior-threshold" min="1" max="100" value="50" oninput="this.nextElementSibling.value = this.value">
                 </div>
                 <div class="flex-space-between">
                     <div>Grid Size</div>

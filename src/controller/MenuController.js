@@ -1,9 +1,7 @@
+/**
+ * Initializes the menu and all the ways to open and close it.
+ */
 function init() {
-    setupOverlay();
-}
-
-
-function setupOverlay() {
     const menuContainer = document.getElementById("menu-overlay");
     const menu = menuContainer.childNodes[1];
     menuContainer.style.display = "none";
@@ -27,6 +25,9 @@ function setupOverlay() {
 }
 
 
+/**
+ * Toggles the visibility of the menu container.
+ */
 function toggleMenu() {
     const menuContainer = document.getElementById("menu-overlay");
     if (menuContainer.style.display == "none") {
