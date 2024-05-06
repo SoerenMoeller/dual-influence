@@ -30,7 +30,7 @@ function loadAllSVGs() {
  * @param {THREE.Scene} scene Scene to draw in.
  * @param {TypeDef.Statement[]} sts Statements to draw the qualities of.
  */
-function drawUnitZBehaviors(scene, sts) {
+function drawSingletonZBehaviors(scene, sts) {
     for (const behavior of Constants.BEHAVIORS) {
         const rotate = [0, 0, 0];
         if (behavior == Constants.MONO || behavior == Constants.ANTI) {
@@ -55,7 +55,7 @@ function drawUnitZBehaviors(scene, sts) {
  * @param {THREE.Scene} scene Scene to draw in.
  * @param {TypeDef.Statement[]} sts Statements to draw the qualities of.
  */
-function drawUnitXBehaviors(scene, sts) {
+function drawSingletonXBehaviors(scene, sts) {
     for (const behavior of Constants.BEHAVIORS) {
         const transform = {
             axis: "z",
@@ -76,12 +76,12 @@ function drawUnitXBehaviors(scene, sts) {
  * @param {THREE.Scene} scene Scene to draw in. 
  * @param {*} sts Statements to draw the behaviors of.
  */
-function drawNonUnitBehaviors(scene, sts) {
+function drawNonSingletonBehaviors(scene, sts) {
     const transformX = {
         axis: "x",
-        posX: (st, dim) => st.centerX() - dim.width/2,
+        posX: (st, dim) => st.centerX() - dim.width,
         posY: (st, dim) => st.y[0],
-        posZ: (st, dim) => -st.z[0],
+        posZ: (st, dim) => -st.z[0] - dim.height * 1.5,
         scale: (st) => Math.min(st.width(), st.depth()),
         rotate: [Math.PI/2, 0, 0]
     }
@@ -236,9 +236,9 @@ function changeScale(svg, sizeX, sizeY) {
  */
 function drawBehaviors(scene, statements) {
     const sts = splitScheme(statements);
-    drawUnitXBehaviors(scene, sts.unitX);
-    drawUnitZBehaviors(scene, sts.unitZ);
-    drawNonUnitBehaviors(scene, sts.nonUnit);
+    drawSingletonXBehaviors(scene, sts.unitX);
+    drawSingletonZBehaviors(scene, sts.unitZ);
+    drawNonSingletonBehaviors(scene, sts.nonUnit);
 }
 
 
