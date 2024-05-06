@@ -23,3 +23,7 @@ Run via:
 ```sh 
 npx vite
 ```
+
+### Shortcuts
+Use `ESC` to open the menu and `I` to change the camera mode between fixed and 
+interactive.
