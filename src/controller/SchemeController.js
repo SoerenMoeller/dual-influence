@@ -4,7 +4,8 @@ import { drawCoordinateSystem } from "../view/CoordinateSystemView";
 import { drawStatement, drawStatementEdges } from "../view/StatementView";
 import { splitScheme } from "../model/Scheme";
 import { changeCameraMode } from "./SceneController";
-import { drawNonUnitBehaviors, drawUnitXBehaviors, drawUnitZBehaviors } from "../view/BehaviorView";
+import { drawBehaviors } from "../view/BehaviorView";
+
 
 /**
  * Initializes a scheme. 
@@ -17,7 +18,7 @@ function init(scheme) {
     // The renderer rescales a box with width=height=depth=1. 
     // To deal with unit intervals, I make distinctions (e.g. to make the width 0)
     // firstly draw the outlines of the box
-    const sts = splitScheme(scheme);
+    const sts = splitScheme(scheme.statements.flat());
     const edgesSts = [
         [sts.nonUnit, 1, 1, 1], [sts.nonUnitH, 1, 0, 1],
         [sts.unitX, 0, 1, 1], [sts.unitXH, 0, 0, 1], 
@@ -42,9 +43,7 @@ function init(scheme) {
     }
 
     // draw the behaviors
-    drawUnitXBehaviors(Settings.scene, sts.unitX);
-    drawUnitZBehaviors(Settings.scene, sts.unitZ);
-    drawNonUnitBehaviors(Settings.scene, sts.nonUnit);
+    drawBehaviors(Settings.scene, scheme.statements.flat());
     
     // prevents some visual clipping
     Settings.scene.traverse(obj => obj.frustumCulled = false);
@@ -52,8 +51,36 @@ function init(scheme) {
 }
 
 
+/**
+ * Removes the behaviors (svgs) from the scene
+ */
+function stopBehaviors() {
+    let svg = Settings.scene.getObjectByName("behavior");
+    while (svg !== undefined) {
+        Settings.scene.remove(svg);
+        svg = Settings.scene.getObjectByName("behavior");
+    }
+}
+
+
+/**
+ * Changes the opacity of every statement as specified.
+ * @param {number} opacity 
+ */
+function changeOpacity(opacity) {
+    const sts = Settings.scene.getObjectByName("sts");
+    if (sts !== undefined) {
+        sts.material.opacity = opacity;
+    }
+}
+
+
+/**
+ * Removes everything from the scene.
+ */
 function stop() {
     Settings.scene.clear();
 }
 
-export { init, stop };
+
+export { init, stop, stopBehaviors, changeOpacity };

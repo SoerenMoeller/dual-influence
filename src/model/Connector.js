@@ -1,7 +1,7 @@
-import * as C from "../util/Constants.js";
-import * as TRIANGLE from "../visualization/triangles.js";
+import * as Constants from "../util/Constants.js";
 
-export function build(scheme, scene) {
+
+function buildConnector(scheme) {
     if (!scheme.normalized) {
         return;
     }
@@ -10,8 +10,10 @@ export function build(scheme, scene) {
     selectFirstPoint(scheme, cornerFn);
     fillFirstRow(scheme, cornerFn);
     fillOtherRows(scheme, cornerFn);
-    TRIANGLE.draw(scene, scheme, cornerFn);
+
+    return cornerFn;
 }
+
 
 function selectFirstPoint(scheme, cornerFn) {
     const sts = scheme.statements;
@@ -21,6 +23,7 @@ function selectFirstPoint(scheme, cornerFn) {
     const value = (range[0] + range[1]) / 2
     addEntry(cornerFn, firstSt.x[0], firstSt.z[0], value);
 }
+
 
 function fillFirstRow(scheme, cornerFn) {
     const sts = scheme.statements;
@@ -41,16 +44,18 @@ function fillFirstRow(scheme, cornerFn) {
     }
 }
 
+
 function restrictBounds(lbounds, ubounds, quality, value) {
-    if (quality == C.MONO) {
+    if (quality == Constants.MONO) {
         lbounds.push(value);
-    } else if (quality == C.ANTI) {
+    } else if (quality == Constants.ANTI) {
         ubounds.push(value);
-    } else if (quality == C.CONST) {
+    } else if (quality == Constants.CONST) {
         lbounds.push(value);
         ubounds.push(value);
     } 
 }
+
 
 function fillOtherRows(scheme, cornerFn) {
     const sts = scheme.statements;
@@ -109,22 +114,24 @@ function fillOtherRows(scheme, cornerFn) {
     }
 }
 
+
 function combineBehaviors(qb, qr) {
-    if (qb == C.CONST && qr == C.CONST) {
-        return C.CONST;
+    if (qb == Constants.CONST && qr == Constants.CONST) {
+        return Constants.CONST;
     }
-    if (qb == C.MONO && qr == C.ANTI 
-        || qb == C.MONO && qr == C.CONST 
-        || qb == C.CONST && qr == C.ANTI) {
-        return C.ANTI;
+    if (qb == Constants.MONO && qr == Constants.ANTI 
+        || qb == Constants.MONO && qr == Constants.CONST 
+        || qb == Constants.CONST && qr == Constants.ANTI) {
+        return Constants.ANTI;
     }
-    if (qb == C.ANTI && qr == C.MONO 
-        || qb == C.ANTI && qr == C.CONST 
-        || qb == C.CONST && qr == C.MONO) {
-        return C.MONO;
+    if (qb == Constants.ANTI && qr == Constants.MONO 
+        || qb == Constants.ANTI && qr == Constants.CONST 
+        || qb == Constants.CONST && qr == Constants.MONO) {
+        return Constants.MONO;
     }
-    return C.ARB;
+    return Constants.ARB;
 }
+
 
 function rangeCheck(st, y) {
     if (st.y[0] <= y && st.y[1] >= y) {
@@ -133,9 +140,13 @@ function rangeCheck(st, y) {
     throw new Error(`Error: ${y} is not in range of statement ${st}`);
 }
 
+
 function addEntry(cornerFn, x, z, y) {
     if (!cornerFn.has(x)) {
         cornerFn.set(x, new Map());
     }
     cornerFn.get(x).set(z, y);
 }
+
+
+export { buildConnector };

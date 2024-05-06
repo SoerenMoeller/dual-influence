@@ -1,6 +1,15 @@
 import * as THREE from "three";
+import * as TypeDef from "../util/TypeDefs";
 
-export function draw(scene, scheme, cornerFn) {
+
+/**
+ * Draws a connector consisting of triangles. The values can be taken from the 
+ * corner function (R, R) -> R
+ * @param {THREE.Scene} scene 
+ * @param {TypeDef.Scheme} scheme 
+ * @param {*} cornerFn TODO
+ */
+function drawConnector(scene, scheme, cornerFn) {
     const corners = []
     for (const st of scheme.statements.flat()) {
         if (!st.nonSingleton()) {
@@ -37,3 +46,6 @@ export function draw(scene, scheme, cornerFn) {
     line.name = "connector-line";
     scene.add(mesh, line);
 }
+
+
+export { drawConnector };

@@ -2,6 +2,7 @@ import { SVGLoader } from "three/addons/loaders/SVGLoader";
 import * as THREE from "three";
 import * as Constants from "../util/Constants.js";
 import * as TypeDef from "../util/TypeDefs.js";
+import { splitScheme } from "../model/Scheme.js";
 
 /**
  * Loads all svgs from imgs/ and visualizes the behaviors of given statements.
@@ -225,4 +226,17 @@ function changeScale(svg, sizeX, sizeY) {
     svg.scale.set(a.x*sizeX, a.y*sizeY, 0);
 }
 
-export { loadAllSVGs, drawUnitZBehaviors, drawUnitXBehaviors, drawNonUnitBehaviors };
+
+/**
+ * Draws the behaviors of the provided statements into the scene.
+ * @param {THREE.Scene} scene 
+ * @param {TypeDef.Statement[]} statements 
+ */
+function drawBehaviors(scene, statements) {
+    const sts = splitScheme(statements);
+    drawUnitXBehaviors(scene, sts.unitX);
+    drawUnitZBehaviors(scene, sts.unitZ);
+    drawNonUnitBehaviors(scene, sts.nonUnit);
+}
+
+export { loadAllSVGs, drawBehaviors };

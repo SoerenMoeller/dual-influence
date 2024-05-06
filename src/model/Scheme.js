@@ -1,10 +1,10 @@
 import * as TypeDef from "../util/TypeDefs.js";
-import * as Rules from "./rules.js";
-import * as Statement from "./statement.js";
+import * as Rules from "./Rules.js";
+import * as Statement from "./Statement.js";
 import * as Constants from "../util/Constants.js";
-import * as main from "../../main.js";
-import * as JS from "../js-helper.js";
 import * as SchemeController from "../controller/SchemeController.js";
+import { intersectSet } from "../util/SetOperation.js";
+
 
 /**
  * Reads scheme from json file, adds bounds for the axes 
@@ -37,13 +37,13 @@ export async function loadSchemeFromFile(exampleName) {
     return scheme;
 }
 
+
 /**
  * 
- * @param {TypeDef.scheme} scheme 
+ * @param {TypeDef.Statement[]} statements 
  * @returns 
  */
-export function splitScheme(scheme) {
-    const statements = scheme.statements.flat();
+export function splitScheme(statements) {
     return {
         nonUnit: statements.filter((e) => {return e.width() != 0 && e.depth() != 0 && e.height() != 0}),
         nonUnitH: statements.filter((e) => {return e.width() != 0 && e.depth() != 0 && e.height() == 0}),
@@ -55,6 +55,7 @@ export function splitScheme(scheme) {
         unitH: statements.filter((e) => {return e.width() == 0 && e.depth() == 0 && e.height() == 0})
     }    
 }
+
 
 /**
  * Returns the min and max bounds of all statements on the axis with the 
@@ -71,20 +72,25 @@ function getBounds(rawModel, index) {
     ]
 }
 
+
 function createDotStatement(xOverlapMap, overlappingZ, x, z) {
     const overlappingX = xOverlapMap.get(x);
-    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    const sts = intersectSet(overlappingX, overlappingZ);
     
     const ys = Statement.intersectY(sts);
     return Statement.addFunctions({
+        x: [x, x],
+        z: [z, z],
+        y: ys,
         xq: Constants.CONST,
         zq: Constants.CONST
     });
 }
 
+
 function createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z) {
-    const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
-    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    const overlappingX = intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+    const sts = intersectSet(overlappingX, overlappingZ);
     const ys = Statement.intersectY(sts);
     const quali = Statement.qualiMin(sts, Constants.X_AXIS);
 
@@ -97,10 +103,11 @@ function createUnitZStatement(xOverlapMap, overlappingZ, x, nextX, z) {
     });
 }
 
+
 function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
     const overlappingX = xOverlapMap.get(x);
-    const overlappingZ = JS.intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
-    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    const overlappingZ = intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+    const sts = intersectSet(overlappingX, overlappingZ);
     const quali = Statement.qualiMin(sts, "z");
     
     const ys = Statement.intersectY(sts);
@@ -113,10 +120,11 @@ function createUnitXStatement(xOverlapMap, zOverlapMap, x, z, nextZ) {
     });
 }
 
+
 function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
-    const overlappingX = JS.intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
-    const overlappingZ = JS.intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
-    const sts = JS.intersectSet(overlappingX, overlappingZ);
+    const overlappingX = intersectSet(xOverlapMap.get(x), xOverlapMap.get(nextX));
+    const overlappingZ = intersectSet(zOverlapMap.get(z), zOverlapMap.get(nextZ));
+    const sts = intersectSet(overlappingX, overlappingZ);
     const ys = Statement.intersectY(sts);
     const qualiX = Statement.qualiMin(sts, Constants.X_AXIS);
     const qualiZ = Statement.qualiMin(sts, Constants.Z_AXIS);
@@ -129,6 +137,7 @@ function createStatement(xOverlapMap, zOverlapMap, x, nextX, z, nextZ) {
         zq: qualiZ
     });
 }
+
 
 function createUpperRow(xOverlapMap, overlappingZ, z, xBounds) {
     const row = [];
@@ -148,6 +157,7 @@ function createUpperRow(xOverlapMap, overlappingZ, z, xBounds) {
     return row;
 }
 
+
 function createLowerRow(xOverlapMap, zOverlapMap, z, nextZ, xBounds) {
     const row = [];
     for (let j = 0; j < xBounds.length - 1; j++) {
@@ -166,6 +176,7 @@ function createLowerRow(xOverlapMap, zOverlapMap, z, nextZ, xBounds) {
     return row;
 }
 
+
 function createIndexMap(scheme) {
     const indexMap = new Map();
     const sts = scheme.statements;
@@ -180,9 +191,10 @@ function createIndexMap(scheme) {
     return indexMap;
 }
 
+
 /**
  * Seperates a scheme, meaning no statements overlap.
- * @param {typedef.Scheme} scheme Scheme to seperate. 
+ * @param {TypeDef.Scheme} scheme Scheme to seperate. 
  * @returns 
  */
 function seperate(scheme) {
@@ -210,6 +222,7 @@ function seperate(scheme) {
 
     return newScheme;
 }
+
 
 function prune(scheme) {
     const indexMap = createIndexMap(scheme);
@@ -298,9 +311,10 @@ function prune(scheme) {
     }
 }
 
+
 /**
  * Normalizes a scheme and plots it.
- * @param {typedef.Scheme} scheme Scheme to normalize
+ * @param {TypeDef.Scheme} scheme Scheme to normalize
  */
 export function normalize(scheme) {
     if (scheme.normalized) {
@@ -315,11 +329,12 @@ export function normalize(scheme) {
     SchemeController.init(newScheme);
 }
 
+
 /**
  * Expects a map where each bound points to the statements where it is a bound.
  * Adds these statements to all intermediate points (between start and end). 
  * @param {number[]} bounds 
- * @param {Map<number, Set<typedef.Statement>>} overlapMap 
+ * @param {Map<number, Set<TypeDef.Statement>>} overlapMap 
  */
 function extendOverlapMap(bounds, overlapMap) {
     const cache = new Set(); 
@@ -337,6 +352,7 @@ function extendOverlapMap(bounds, overlapMap) {
         }
     }
 }
+
 
 /**
  * Extracts all bounds of a scheme and which points are overlapped by 

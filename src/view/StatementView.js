@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as Constants from "../util/Constants.js";
 import * as TypeDef from "../util/TypeDefs.js";
 
+
 /**
  * Draws a statement as a box. 
  * To improve performance, InstancedMesh is used. In order to deal with 
@@ -29,9 +30,10 @@ function drawStatement(scene, sts, baseWidth, baseHeight, baseDepth, opacity) {
         mesh.setMatrixAt( i, dummy.matrix );
     }
     mesh.instanceMatrix.needsUpdate = true;
-    mesh.name = name;
+    mesh.name = "sts";
     scene.add(mesh);
 }
+
 
 /**
  * Draws the outlines of a statement. Generally it is a cuboid. 
@@ -81,15 +83,5 @@ function drawStatementEdges(scene, sts, baseWidth, baseHeight, baseDepth) {
     scene.add(instEdges);
 }
 
-
-export function drawBehaviors(scene, sts) {
-    const cuboidSts = sts.filter((e) => {return e.width() != 0 && e.depth() != 0 && e.height() != 0});
-    const xUnitSts = sts.filter((e) => {return e.width() == 0 && e.depth() != 0 && e.height() != 0});
-    const yUnitSts = sts.filter((e) => {return e.width() != 0 && e.depth() == 0 && e.height() != 0});
-
-    SVG.drawCuboidQualities(scene, cuboidSts);
-    SVG.drawUnitXQualities(scene, xUnitSts);
-    SVG.drawUnitZQualities(scene, yUnitSts);
-}
 
 export { drawStatement, drawStatementEdges };

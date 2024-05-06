@@ -1,9 +1,13 @@
 import * as THREE from "three";
 import Settings from "../util/Settings";
 import * as Scheme from "../model/Scheme";
+import * as ConnectorController from "./ConnectorController";
 import { changeCameraMode } from "./SceneController";
 
 
+/**
+ * Initializes the settings, the menu, and the buttons.
+ */
 function init() {
     const interactiveCheckBox = document.getElementById("interactive-checkbox");
     const behaviorThresholdField = document.getElementById("behavior-threshold");
@@ -18,6 +22,7 @@ function init() {
     initInteractiveMode();
     initCoordinateView();
     initNormalizer();
+    ConnectorController.init();
 }
 
 
@@ -58,5 +63,6 @@ function initNormalizer() {
         Scheme.normalize(Settings.scheme);
     });
 }
+
 
 export { init };
