@@ -22,13 +22,16 @@ function setupExampleSelector() {
     const exampleSelect = document.getElementById("example-picker");
     exampleSelect.value = Settings.example;
 
-    exampleSelect.addEventListener("change", async (evt) => {
-        Settings.example = exampleSelect.value;
-        SchemeController.stop();
-        const scheme = await Scheme.loadSchemeFromFile(Settings.example);
-        SchemeController.init(scheme);
-        MenuController.closeMenu();
-    });
+    exampleSelect.addEventListener("change", async (evt) => loadExample());
+}
+
+async function loadExample() {
+    const exampleSelect = document.getElementById("example-picker");
+    Settings.example = exampleSelect.value;
+    SchemeController.stop();
+    const scheme = await Scheme.loadSchemeFromFile(Settings.example);
+    SchemeController.init(scheme);
+    MenuController.closeMenu();
 }
 
 
@@ -51,7 +54,8 @@ function setupOpacityPicker() {
 
     stOpacityPicker.addEventListener("change", (evt) => {
         Settings.opacity = stOpacityPicker.value;
-        SchemeController.changeOpacity(Settings.scene, Settings.opacity);
+        SchemeController.changeOpacity(Settings.opacity);
+        evt.stopImmediatePropagation();
     });
 }
 
@@ -112,4 +116,4 @@ function setupCoordinateView() {
 }
 
 
-export { init };
+export { init, loadExample };

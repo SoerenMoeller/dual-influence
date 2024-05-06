@@ -39,7 +39,7 @@ function init(scheme) {
     ];
 
     for (const [sts, width, height, depth] of bodySts) {
-        drawStatement(Settings.scene, sts, width, height, depth, Settings.opacity);
+        drawStatement(Settings.scene, sts, width, height, depth);
     }
 
     // draw the behaviors

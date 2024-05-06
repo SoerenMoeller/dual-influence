@@ -6,7 +6,6 @@ import * as ConnectorView from "../view/ConnectorView";
 
 
 function init() {
-    return;
     const connectorButton = document.getElementById("connector-button");
     const stOpacityPicker = document.getElementById("st-opacity");
 
@@ -20,7 +19,8 @@ function init() {
 
             Settings.opacity = 0;
             stOpacityPicker.value = 0;
-            SchemeController.changeOpacity(Settings.scene, Settings.opacity);
+            stOpacityPicker.previousElementSibling.innerText = Settings.opacity;
+            SchemeController.changeOpacity(Settings.opacity);
 
             connectorButton.textContent = "Hide Connector";
         } else {

@@ -8,7 +8,7 @@ const SETTINGS = {
     gridSize: 10,
     example: "example2",
     interactiveMode: false,
-    opacity: 0.3,
+    opacity: 0,
     threshold: 50
 }
 

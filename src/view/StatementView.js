@@ -14,10 +14,10 @@ import * as TypeDef from "../util/TypeDefs.js";
  * @param {number} baseDepth 
  * @param {number} opacity 
  */
-function drawStatement(scene, sts, baseWidth, baseHeight, baseDepth, opacity) {
+function drawStatement(scene, sts, baseWidth, baseHeight, baseDepth) {
     const baseGeometry = new THREE.BoxGeometry(baseWidth, baseHeight, baseDepth);
     const materialBox = new THREE.MeshBasicMaterial( 
-        {color: Constants.WHITE, opacity: opacity, transparent: true, side: THREE.DoubleSide} 
+        {color: Constants.WHITE, opacity: 0, transparent: true, side: THREE.DoubleSide} 
     ); 
     const mesh = new THREE.InstancedMesh(baseGeometry, materialBox, sts.length);
 
