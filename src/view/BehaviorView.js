@@ -168,7 +168,7 @@ function loadSVG(name) {
     const path = qualiToPath(name);
     loader.load(path, (data) => {
         // Set material for the paths
-        const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide });
         const shape = data.paths[0].toShapes(true)[0];
         const geometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
         const mesh = new THREE.Mesh(geometry, material);

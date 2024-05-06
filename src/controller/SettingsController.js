@@ -1,28 +1,65 @@
 import * as THREE from "three";
 import Settings from "../util/Settings";
 import * as SceneController from "./SceneController";
+import * as SchemeController from "./SchemeController";
+import * as Scheme from "../model/Scheme";
+import * as MenuController from "./MenuController";
 
 
 /**
  * Initializes the settings.
  */
 function init() {
-    const interactiveCheckBox = document.getElementById("interactive-checkbox");
-    const behaviorThresholdField = document.getElementById("behavior-threshold");
-    const exampleSelect = document.getElementById("example-picker");
-    const stOpacityPicker = document.getElementById("st-opacity");
-
-    interactiveCheckBox.checked = Settings.interactiveMode;
-    behaviorThresholdField.value = Settings.threshold;
-    exampleSelect.value = Settings.example;
-    stOpacityPicker.value = Settings.opacity;
-
     setupInteractiveMode();
-    initCoordinateView();
+    setupCoordinateView();
+    setupOpacityPicker();
+    setupBehaviorRenderRange();
+    setupExampleSelector();
+}
+
+
+function setupExampleSelector() {
+    const exampleSelect = document.getElementById("example-picker");
+    exampleSelect.value = Settings.example;
+
+    exampleSelect.addEventListener("change", async (evt) => {
+        Settings.example = exampleSelect.value;
+        SchemeController.stop();
+        const scheme = await Scheme.loadSchemeFromFile(Settings.example);
+        SchemeController.init(scheme);
+        MenuController.closeMenu();
+    });
+}
+
+
+function setupBehaviorRenderRange() {
+    const behaviorThresholdField = document.getElementById("behavior-threshold");
+    behaviorThresholdField.value = Settings.threshold;
+    behaviorThresholdField.previousElementSibling.innerText = Settings.threshold;
+
+    // event listeners
+    behaviorThresholdField.addEventListener("change", (e) => {
+        Settings.threshold = behaviorThresholdField.value;
+    });
+}
+
+
+function setupOpacityPicker() {
+    const stOpacityPicker = document.getElementById("st-opacity");
+    stOpacityPicker.value = Settings.opacity;
+    stOpacityPicker.previousElementSibling.innerText = Settings.opacity;
+
+    stOpacityPicker.addEventListener("change", (evt) => {
+        Settings.opacity = stOpacityPicker.value;
+        SchemeController.changeOpacity(Settings.scene, Settings.opacity);
+    });
 }
 
 
 function setupInteractiveMode() {
+    const interactiveCheckBox = document.getElementById("interactive-checkbox");
+    interactiveCheckBox.checked = Settings.interactiveMode;
+
     // default value
     const setInteractiveField = (isSet) => {
         const interacticeField = document.getElementById("interactive-mode");
@@ -33,7 +70,6 @@ function setupInteractiveMode() {
     setInteractiveField(Settings.interactiveMode);
     
     // on change
-    const interactiveCheckBox = document.getElementById("interactive-checkbox");
     interactiveCheckBox.addEventListener("change", (evt) => {
         Settings.interactiveMode = interactiveCheckBox.checked;
         setInteractiveField(Settings.interactiveMode);
@@ -54,7 +90,7 @@ function setupInteractiveMode() {
 }
 
 
-function initCoordinateView() {
+function setupCoordinateView() {
     const mousePositionField = document.getElementById("mouse-position");
 
     document.addEventListener("mousemove", (e) => {

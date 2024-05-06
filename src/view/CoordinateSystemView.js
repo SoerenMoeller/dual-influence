@@ -41,7 +41,7 @@ function drawCoordinateSystem(scene, scheme) {
         const origin = axis.dir.clone().multiplyScalar(axis.minBound);
         const length = axis.maxBound - axis.minBound;
 
-        const arrow = new THREE.ArrowHelper(axis.dir, origin, length, Constants.GREEN, length * 0.05);
+        const arrow = new THREE.ArrowHelper(axis.dir, origin, length, Constants.BLUE, length * 0.05);
         arrow.line.material.linewidth = 2;
         scene.add(arrow);
 

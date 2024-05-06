@@ -38,4 +38,11 @@ function toggleMenu() {
     menuContainer.style.display = "none";
 }
 
-export { init };
+
+function closeMenu() {
+    const menuContainer = document.getElementById("menu-overlay");
+    menuContainer.style.display = "none";
+}
+
+
+export { init, closeMenu };

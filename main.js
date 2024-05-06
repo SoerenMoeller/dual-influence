@@ -14,25 +14,3 @@ async function main() {
     const scheme = await Scheme.loadSchemeFromFile(Settings.example);
     SchemeController.init(scheme);
 }
-
-
-async function main2() {
-    const behaviorThresholdField = document.getElementById("behavior-threshold");
-    const exampleSelect = document.getElementById("example-picker");
-    const stOpacityPicker = document.getElementById("st-opacity");
-
-    // default values
-    behaviorThresholdField.value = Settings.threshold;
-    exampleSelect.value = Settings.example;
-    stOpacityPicker.value = Settings.opacity;
-
-    // event listeners
-    behaviorThresholdField.addEventListener("change", (e) => {
-        Settings.threshold = behaviorThresholdField.value;
-    });
-    exampleSelect.addEventListener("change", (e) => loadSchemeFromFile());
-    stOpacityPicker.addEventListener("change", (e) => {
-        Settings.opacity = stOpacityPicker.value;
-        RESET.changeOpacity(Settings.scene, Settings.opacity);
-    });
-}
