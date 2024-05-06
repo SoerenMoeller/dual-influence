@@ -1,5 +1,75 @@
-h2 {
+h1 {
     font-size: 3rem;
+}
+
+body {
+    padding: 1%;
+}
+
+header {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+header > div {
+    flex-grow: 1;
+}
+
+header > button {
+    margin-left: 1rem;
+}
+
+main {
+    width: 100%;
+    height: 90%;
+}
+
+canvas {
+    width: 100%;
+    height: 100%; 
+}
+
+#menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(105, 105, 105, 0.9);
+}
+
+#menu-overlay > div {
+    width: max(50%, 300px);
+    background-color: rgb(220, 220, 220);
+    padding: 2%;
+    border-radius: 1rem;
+    border: 1px black solid;
+}
+
+#heading-seperator {
+    width: 100%;
+    height: 1px; 
+    background-color: black; 
+    margin: 1rem 0; 
+}
+
+#menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#exit-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: red;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 #container {
@@ -8,14 +78,6 @@ h2 {
     width: 100%;
     display: flex;
     background-color: #d3d3d3;
-}
-
-main {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 75vw;
-    height: 100%;
 }
 
 #main-seperator {
@@ -36,19 +98,8 @@ main {
     justify-content: space-between;
 }
 
-#drawArea {
-    width: 100%;
-    height: 100%;
-}
 
-#heading-seperator {
-    padding: 2rem 0rem;
-}
 
-#heading-seperator > div {
-    width: 100%;
-    border-top: 1px solid black;
-}
 
 #mouse-position {
     min-width: 10rem;

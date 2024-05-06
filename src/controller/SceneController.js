@@ -3,8 +3,8 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Settings from "../util/Settings";
 import * as SettingsController from "./SettingsController";
 import * as SchemeController from "./SchemeController";
-import { CANVAS_ID } from "../util/Constants";
 import * as BehaviorView from "../view/BehaviorView";
+import { CANVAS_ID } from "../util/Constants";
 
 
 /**

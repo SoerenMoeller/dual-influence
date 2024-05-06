@@ -2,6 +2,7 @@ import * as THREE from "three";
 import Settings from "../util/Settings";
 import * as Scheme from "../model/Scheme";
 import * as ConnectorController from "./ConnectorController";
+import * as MenuController from "./MenuController";
 import { changeCameraMode } from "./SceneController";
 
 
@@ -22,6 +23,8 @@ function init() {
     initInteractiveMode();
     initCoordinateView();
     initNormalizer();
+
+    MenuController.init();
     ConnectorController.init();
 }
 
@@ -58,10 +61,10 @@ function initCoordinateView() {
 
 
 function initNormalizer() {
-    const normalizeButton = document.getElementById("normalize-button");
-    normalizeButton.addEventListener("click", (e) => {
-        Scheme.normalize(Settings.scheme);
-    });
+    //const normalizeButton = document.getElementById("normalize-button");
+    //normalizeButton.addEventListener("click", (e) => {
+    //    Scheme.normalize(Settings.scheme);
+    //});
 }
 
 

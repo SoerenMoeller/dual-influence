@@ -6,6 +6,7 @@ import * as ConnectorView from "../view/ConnectorView";
 
 
 function init() {
+    return;
     const connectorButton = document.getElementById("connector-button");
     const stOpacityPicker = document.getElementById("st-opacity");
 

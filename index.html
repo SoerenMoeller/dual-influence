@@ -11,23 +11,24 @@
         <script type="module" src="/main.js"></script>
 	</head>
 	<body>
-    <div id="container">
+        <header>
+            <h1>Dual Influence Visualizer</h1>
+            <div></div>
+            <button>Normalize</button>
+            <button>Connector</button>
+            <button id="menu-button">Menu</button>
+        </header>
         <main>
             <div id="mouse-position"></div>
-            <canvas id="drawArea"></canvas>
+            <canvas id="draw-area"></canvas>
         </main>
-        <div id="main-seperator">
-            <div></div>
-        </div>
-        <div id="sidebar">
+        <div id="menu-overlay">
             <div>
-                <div id="heading-container">
-                    <h2>Dual Influence</h2>
-                    <h2>Visualizer</h2>
+                <div id="menu-header">
+                    <h3>Menu</h3>
+                    <button id="exit-button">X</button>
                 </div>
-                <div id="heading-seperator">
-                    <div></div>
-                </div>
+                <div id="heading-seperator"></div>
                 <div class="flex-space-between">
                     <div>Interactive Mode</div>
                     <label class="switch">
@@ -62,12 +63,7 @@
                     </select>
                 </div>
             </div>
-            <div class="flex-space-between">
-                <div id="normalize-button" class="button">Normalize</div>
-                <div id="connector-button" class="button">Build Connector</div>
-            </div>
         </div>
-    </div>
 	</body>
   <script type="x-shader/x-vertex" id="vertex-shader-scale">
         attribute vec3 aPosition;
