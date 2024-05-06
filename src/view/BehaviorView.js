@@ -81,7 +81,7 @@ function drawNonSingletonBehaviors(scene, sts) {
         axis: "x",
         posX: (st, dim) => st.centerX() - dim.width,
         posY: (st, dim) => st.y[0],
-        posZ: (st, dim) => -st.z[0] - dim.height * 1.5,
+        posZ: (st, dim) => -st.z[0] - dim.height * 1.1,
         scale: (st) => Math.min(st.width(), st.depth()),
         rotate: [Math.PI/2, 0, 0]
     }
